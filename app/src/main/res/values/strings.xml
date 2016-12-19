@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">LineFollower</string>
+    <string name="LCurve">LEFT</string>
+    <string name="RCurve">RIGHT</string>
+    <string name="LCurveR">LEFT R</string>
+    <string name="RCurveR">RIGHT R</string>
+    <string name="Up">UP</string>
+    <string name="Down">DOWN</string>
+    <string name="Test">TEST</string>
+    <string name="Start">START</string>
+    <string name="Stop">STOP</string>
+    <string name="Max">MAX</string>
+    <string name="Pauza">PAUSE</string>
+    <string name="Automatic">AUTO</string>
+    <string name="Connection">CONNECT</string>
+    <string name="Connection2">DISCONNECT</string>
+    <string name="LED1">LED1</string>
+    <string name="LED12">LED12</string>
+    <string name="LED2">LED2</string>
+    <string name="KP1">KP+</string>
+    <string name="KP2">KP-</string>
+    <string name="KD1">KD+</string>
+    <string name="KD2">KD-</string>
+    <string name="SPEED1">SPEED+</string>
+    <string name="SPEED2">SPEED-</string>
+    <string name="SPEED">SPEED</string>
+    <string name="CURVE">TURN</string>
+    <string name="SAVE">SAVE</string>
+    <string name="CLEAR">CLEAR</string>
+
+    <string name="Competition">COMPETITION</string>
+</resources>

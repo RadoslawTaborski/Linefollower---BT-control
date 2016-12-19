@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_test"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp"
+    tools:context="com.example.rados.lf_sterowanie.TestActivity">
+
+    <TextView
+        android:id="@+id/textRight"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnRight"
+        android:layout_alignEnd="@+id/btnRight"
+        android:layout_toEndOf="@+id/btnSpeedUp"
+        android:text="0"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/textLeft"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_alignStart="@+id/btnLeft"
+        android:gravity="center"
+        android:layout_toStartOf="@+id/btnSpeedUp"
+        android:layout_above="@+id/btnRight" />
+
+    <Button
+        android:id="@+id/btnSpeedDown"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="backClick"
+        android:width="120dp"
+        android:height="100dp"
+        android:text="@string/Down"
+        android:layout_marginBottom="13dp"
+        android:layout_alignBottom="@+id/btnRightR"
+        android:layout_alignStart="@+id/btnSpeedUp" />
+
+    <Button
+        android:text="@string/LCurveR"
+        android:width="120dp"
+        android:height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="leftRClick"
+        android:id="@+id/btnLeftR"
+        android:layout_above="@+id/btnMax"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/btnRight"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="rightClick"
+        android:width="120dp"
+        android:height="100dp"
+        android:text="@string/RCurve"
+        android:layout_above="@+id/btnRightR"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="@string/Start"
+        android:width="75dp"
+        android:height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startClick"
+        android:id="@+id/btnStart"
+        android:layout_alignTop="@+id/btnMax"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="@string/Stop"
+        android:width="75dp"
+        android:height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="stopClick"
+        android:id="@+id/btnStop"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="37dp" />
+
+    <Button
+        android:text="@string/Pauza"
+        android:height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="pauseClick"
+        android:id="@+id/btnPause"
+        android:width="20dp"
+        android:layout_alignTop="@+id/btnStop"
+        android:layout_toStartOf="@+id/btnStop" />
+
+    <Button
+        android:text="@string/Connection"
+        android:width="300dp"
+        android:height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="connectClick"
+        android:id="@+id/btnConnect"
+        android:layout_below="@+id/btnStart"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btnSpeedUp"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="topClick"
+        android:width="120dp"
+        android:height="100dp"
+        android:text="@string/Up"
+        android:layout_above="@+id/btnSpeedDown"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/Max"
+        android:height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="maxClick"
+        android:id="@+id/btnMax"
+        android:width="20dp"
+        android:layout_below="@+id/btnSpeedDown"
+        android:layout_toStartOf="@+id/btnPause" />
+
+    <TextView
+        android:id="@+id/textSpeed"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:width="120dp"
+        android:gravity="center"
+        android:layout_above="@+id/btnSpeedUp"
+        android:layout_toEndOf="@+id/textLeft" />
+
+    <Button
+        android:text="@string/LED12"
+        android:onClick="led12Click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLED12"
+        android:layout_alignBaseline="@+id/btnLED1"
+        android:layout_alignBottom="@+id/btnLED1"
+        android:layout_alignStart="@+id/btnMax" />
+
+    <Button
+        android:text="@string/LED2"
+        android:onClick="led2Click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLED2"
+        android:layout_alignBaseline="@+id/btnLED12"
+        android:layout_alignBottom="@+id/btnLED12"
+        android:layout_toEndOf="@+id/btnLED12" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sbSpeed"
+        android:layout_below="@+id/btnLED12"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="19dp"
+        android:layout_toStartOf="@+id/btnLED2" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sbTurn"
+        android:layout_alignTop="@+id/sbSpeed"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/sbSpeed" />
+
+    <TextView
+        android:text="@string/CURVE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnLED12"
+        android:id="@+id/tvTurn"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/btnLED12"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/tvSpeed" />
+
+    <Button
+        android:id="@+id/btnLeft"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="leftClick"
+        android:width="120dp"
+        android:height="100dp"
+        android:text="@string/LCurve"
+        android:layout_below="@+id/textLeft"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="@string/RCurveR"
+        android:width="120dp"
+        android:height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="rightRClick"
+        android:id="@+id/btnRightR"
+        android:layout_above="@+id/btnStop"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="@string/LED1"
+        android:onClick="led1Click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLED1"
+        android:layout_below="@+id/chronometer"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp" />
+
+    <CheckBox
+        android:text="@string/Automatic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbAuto"
+        android:onClick="changedClick"
+        android:layout_alignBaseline="@+id/btnLED2"
+        android:layout_alignBottom="@+id/btnLED2"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="@string/SPEED"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSpeed"
+        android:gravity="center"
+        android:layout_below="@+id/btnLED12"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/btnLED2" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="14dp"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        tools:text="Hello"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <chronometer.Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:text=""
+        android:gravity="center"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
