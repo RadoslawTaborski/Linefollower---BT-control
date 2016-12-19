@@ -1,10 +1,5 @@
 package com.example.rados.lf_sterowanie;
 
-import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,13 +9,15 @@ import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.IOException;
 
+
+//TODO: Dodanie kalibracji (sprawdzenie czy nie jest w eeprom)
+//TODO: Sprawdzanie czy BT jest włączone
 public class TestActivity extends AppCompatActivity {
-    public MyBluetooth bluetooth=new MyBluetooth();
-    private ProgressDialog progress;
+    public MyBluetooth bluetooth=null;
     public boolean auto=false;
+    public boolean btIsOn=true;
     TextView textRight;
     TextView textLeft;
     TextView textSpeed;
@@ -83,6 +80,19 @@ public class TestActivity extends AppCompatActivity {
         textSpeed.setVisibility(View.INVISIBLE);
         chrome.setText("00:00:0");
         info.setText("Sterowanie manualne");
+
+        bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2");
+
+        if(btIsOn) {
+            if (bluetooth.isBtConnected) {
+                btnConnect.setText("DISCONNECT");
+            } else {
+                btnConnect.setText("CONNECT");
+            }
+        }else{
+            btnConnect.setText("TURN ON BLUETOOTH");
+        }
+
     }
 
     public void changedClick(View v){
@@ -163,29 +173,14 @@ public class TestActivity extends AppCompatActivity {
         chrome.setBase(SystemClock.elapsedRealtime()+timeWhenStopped);
         chrome.start();
         if(bluetooth.isBtConnected)
-            try
-            {
                 bluetooth.write("7");
-            }
-            catch (IOException e)
-            {
-                msg("Error");
-            }
     }
 
     public void stopClick(View v) {
         chrome.stop();
         timeWhenStopped=0;
-        if(bluetooth.isBtConnected)
-        {
-            try
-            {
+        if(bluetooth.isBtConnected) {
                 bluetooth.write("0");
-            }
-            catch (IOException e)
-            {
-                msg("Error");
-            }
         }
 
     }
@@ -199,8 +194,18 @@ public class TestActivity extends AppCompatActivity {
         chrome.stop();
     }
 
-    public void connectClick(View v) throws IOException{
-        new ConnectBT().execute();
+    public void connectClick(View v) {
+        if(btIsOn) {
+            if (bluetooth.isBtConnected) {
+                bluetooth.Disconnect();
+                btnConnect.setText("CONNECT");
+            } else {
+                bluetooth.Connect();
+                btnConnect.setText("DISCONNECT");
+            }
+        }else{
+            //TODO: tak żeby odpalało BT
+        }
     }
 
     public void led1Click(View v){
@@ -216,20 +221,6 @@ public class TestActivity extends AppCompatActivity {
     }
 
 
-    private void Disconnect() throws IOException
-    {
-        try
-        {
-            bluetooth.Disconnect();
-        }
-        catch (IOException e)
-        {
-            msg("Error");
-        }
-        finish(); //return to the first layout
-    }
-
-    // fast way to call Toast
     private void msg(String s)
     {
         Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
@@ -252,52 +243,5 @@ public class TestActivity extends AppCompatActivity {
 
 
 
-    private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
-    {
-        private boolean ConnectSuccess = true; //if it's here, it's almost connected
 
-        @Override
-        protected void onPreExecute()
-        {
-            progress = ProgressDialog.show(TestActivity.this, "Connecting...", "Please wait!!!");  //show a progress dialog
-        }
-
-        @Override
-        protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
-        {
-            try
-            {
-                if (bluetooth.btSocket == null || !bluetooth.isBtConnected)
-                {
-                    bluetooth.myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
-                    BluetoothDevice dispositivo = bluetooth.myBluetooth.getRemoteDevice(bluetooth.address);//connects to the device's address and checks if it's available
-                    bluetooth.btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(bluetooth.myUUID);//create a RFCOMM (SPP) connection
-                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    bluetooth.btSocket.connect();//start connection
-                }
-            }
-            catch (IOException e)
-            {
-                ConnectSuccess = false;//if the try failed, you can check the exception here
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
-        {
-            super.onPostExecute(result);
-
-            if (!ConnectSuccess)
-            {
-                msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
-                finish();
-            }
-            else
-            {
-                msg("Connected.");
-                bluetooth.isBtConnected = true;
-            }
-            progress.dismiss();
-        }
-    }
 }
