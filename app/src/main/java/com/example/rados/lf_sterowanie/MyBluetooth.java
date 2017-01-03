@@ -6,24 +6,35 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.widget.Toast;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * Created by rados on 19.12.2016.
  */
 
-    //TODO: sprawdzanie czy bluetooth jest wciąż dostępny
-    //TODO: odbieranie danych
-    //TODO: opcja włączania bluetootha gdy jest wyłączony
+//TODO: sprawdzanie czy bluetooth jest sparowany
+//TODO: odbieranie danych
 public class MyBluetooth {
-    private BluetoothAdapter myBluetooth = null;
+    public BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothSocket btSocket = null;
     public boolean isBtConnected = false;
+    public boolean stopWorker = false;
+    OutputStream btOutputStream;
+    InputStream btInputStream;
+    Thread workerThread;
+    byte[] readBuffer;
+    int readBufferPosition;
     private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private String address = null;
+
     private ProgressDialog progress;
     Activity activity=null;
     Context context=null;
@@ -32,6 +43,7 @@ public class MyBluetooth {
     {
         SetActivityAnDContext(act,con);
         SetAddress(add);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     public void SetActivityAnDContext(Activity act, Context con){
@@ -43,33 +55,96 @@ public class MyBluetooth {
         address=add;
     }
 
-    public void write(String msg)
+    public void turnOnBT() throws Exception
     {
-        try
-        {
-            btSocket.getOutputStream().write(msg.getBytes());
-        }
-        catch (IOException e)
-        {
-            msg("Error");
-        }
-    }
-
-    public void Disconnect()
-    {
-        if (btSocket!=null) //If the btSocket is busy
-        {
-            try
-            {
-                btSocket.close(); //close connection
+        if(mBluetoothAdapter != null) {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                activity.startActivityForResult(enableBluetooth,0);
             }
-            catch (IOException e)
-            { msg("Error");}
+        }else{
+            throw new Exception("No bluetooth adapter available");
         }
     }
 
-    public void Connect(){
+    private void beginListenForData()
+    {
+        final Handler handler = new Handler();
+        final byte delimiter = 10; //This is the ASCII code for a newline character
+
+        stopWorker = false;
+        readBufferPosition = 0;
+        readBuffer = new byte[1024];
+        workerThread = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                while(!Thread.currentThread().isInterrupted() && !stopWorker)
+                {
+                    try
+                    {
+                        int bytesAvailable = btInputStream.available();
+                        if(bytesAvailable > 0)
+                        {
+                            byte[] packetBytes = new byte[bytesAvailable];
+                            btInputStream.read(packetBytes);
+                            for(int i=0;i<bytesAvailable;i++)
+                            {
+                                byte b = packetBytes[i];
+                                if(b == delimiter)
+                                {
+                                    byte[] encodedBytes = new byte[readBufferPosition];
+                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                    final String data = new String(encodedBytes, "US-ASCII");
+                                    readBufferPosition = 0;
+
+                                    handler.post(new Runnable()
+                                    {
+                                        public void run()
+                                        {
+                                            //myLabel.setText(data);
+                                            //lblReceived.setText(data);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    readBuffer[readBufferPosition++] = b;
+                                }
+                            }
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        stopWorker = true;
+                    }
+                }
+            }
+        });
+
+        workerThread.start();
+    }
+
+    void sendData(String msg) throws IOException
+    {
+        btOutputStream.write(msg.getBytes());
+    }
+
+    void Disconnect() throws IOException
+    {
+        isBtConnected=false;
+        stopWorker = true;
+        btOutputStream.close();
+        btInputStream.close();
+        btSocket.close();
+    }
+
+
+    public void Connect(boolean receive) throws IOException{
         new ConnectBT().execute();
+       /* if(receive){
+            beginListenForData();
+        }*/
     }
 
     private void msg(String s)
@@ -95,11 +170,12 @@ public class MyBluetooth {
             {
                 if (btSocket == null || !isBtConnected)
                 {
-                    myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
-                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
+                    BluetoothDevice dispositivo = mBluetoothAdapter.getRemoteDevice(address);//connects to the device's address and checks if it's available
                     btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                     btSocket.connect();//start connection
+                    btOutputStream = btSocket.getOutputStream();
+                    btInputStream = btSocket.getInputStream();
                 }
             }
             catch (IOException e)

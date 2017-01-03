@@ -17,7 +17,7 @@ import java.io.IOException;
 public class TestActivity extends AppCompatActivity {
     public MyBluetooth bluetooth=null;
     public boolean auto=false;
-    public boolean btIsOn=true;
+    public boolean btIsOn=false;
     TextView textRight;
     TextView textLeft;
     TextView textSpeed;
@@ -83,16 +83,9 @@ public class TestActivity extends AppCompatActivity {
 
         bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2");
 
-        if(btIsOn) {
-            if (bluetooth.isBtConnected) {
-                btnConnect.setText("DISCONNECT");
-            } else {
-                btnConnect.setText("CONNECT");
-            }
-        }else{
-            btnConnect.setText("TURN ON BLUETOOTH");
-        }
-
+        Runnable runner = new MyRun();
+        Thread thread=new Thread(runner);
+        thread.start();
     }
 
     public void changedClick(View v){
@@ -173,14 +166,22 @@ public class TestActivity extends AppCompatActivity {
         chrome.setBase(SystemClock.elapsedRealtime()+timeWhenStopped);
         chrome.start();
         if(bluetooth.isBtConnected)
-                bluetooth.write("7");
+            try
+            {
+                bluetooth.sendData("7");
+            }
+            catch (IOException ex) { }
     }
 
     public void stopClick(View v) {
         chrome.stop();
         timeWhenStopped=0;
         if(bluetooth.isBtConnected) {
-                bluetooth.write("0");
+            try
+            {
+                bluetooth.sendData("0");
+            }
+            catch (IOException ex) { }
         }
 
     }
@@ -197,14 +198,30 @@ public class TestActivity extends AppCompatActivity {
     public void connectClick(View v) {
         if(btIsOn) {
             if (bluetooth.isBtConnected) {
-                bluetooth.Disconnect();
-                btnConnect.setText("CONNECT");
+                try
+                {
+                    bluetooth.Disconnect();
+                    btnConnect.setText("CONNECT");
+                }
+                catch (IOException ex) { }
+
             } else {
-                bluetooth.Connect();
-                btnConnect.setText("DISCONNECT");
+                try
+                {
+                    bluetooth.Connect(true);
+                    btnConnect.setText("DISCONNECT");
+                }
+                catch (IOException ex) { }
             }
         }else{
-            //TODO: tak żeby odpalało BT
+            try
+            {
+                bluetooth.turnOnBT();
+                btIsOn=true;
+                btnConnect.setText("CONNECT");
+            }
+            catch (Exception ex) { }
+
         }
     }
 
@@ -226,22 +243,50 @@ public class TestActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public class MyRun implements Runnable {
+        @Override
+        public void run() {
+            while(true) {
+                try {
+                    Thread.sleep(300);
+                    if(bluetooth.mBluetoothAdapter != null) {
+                        if (!bluetooth.mBluetoothAdapter.isEnabled()) {
+                            btIsOn=false;
+                            bluetooth.isBtConnected=false;
+                        }else {
+                            btIsOn=true;
+                        }
+                    }else{
+                        throw new Exception("No bluetooth adapter available");
+                    }
+                    Thread UIthread=new Thread(new Runnable() {
+                        public void run() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (btIsOn) {
+                                        if (bluetooth.isBtConnected) {
+                                            btnConnect.setText("DISCONNECT");
+                                        } else {
+                                            btnConnect.setText("CONNECT");
+                                        }
+                                    } else {
+                                        btnConnect.setText("TURN ON BLUETOOTH");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    UIthread.start();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    btIsOn=false;
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    btIsOn=false;
+                }
+            }
+        }
+    }
 }
