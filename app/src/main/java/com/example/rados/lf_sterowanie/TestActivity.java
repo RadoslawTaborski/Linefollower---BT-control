@@ -1,5 +1,13 @@
 package com.example.rados.lf_sterowanie;
 
+import android.bluetooth.BluetoothA2dp;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothHealth;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +23,7 @@ import java.io.IOException;
 //TODO: Dodanie kalibracji (sprawdzenie czy nie jest w eeprom)
 //TODO: Sprawdzanie czy BT jest włączone
 public class TestActivity extends AppCompatActivity {
-    public MyBluetooth bluetooth=null;
+    public static MyBluetooth bluetooth;
     public boolean auto=false;
     public boolean btIsOn=false;
     TextView textRight;
@@ -81,7 +89,18 @@ public class TestActivity extends AppCompatActivity {
         chrome.setText("00:00:0");
         info.setText("Sterowanie manualne");
 
-        bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2");
+        if(bluetooth==null){
+            bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2");
+        }else {
+            bluetooth.SetActivityAnDContext(TestActivity.this,getApplicationContext());
+        }
+
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter);
 
         Runnable runner = new MyRun();
         Thread thread=new Thread(runner);
@@ -201,7 +220,6 @@ public class TestActivity extends AppCompatActivity {
                 try
                 {
                     bluetooth.Disconnect();
-                    btnConnect.setText("CONNECT");
                 }
                 catch (IOException ex) { }
 
@@ -209,7 +227,6 @@ public class TestActivity extends AppCompatActivity {
                 try
                 {
                     bluetooth.Connect(true);
-                    btnConnect.setText("DISCONNECT");
                 }
                 catch (IOException ex) { }
             }
@@ -218,7 +235,6 @@ public class TestActivity extends AppCompatActivity {
             {
                 bluetooth.turnOnBT();
                 btIsOn=true;
-                btnConnect.setText("CONNECT");
             }
             catch (Exception ex) { }
 
@@ -253,8 +269,21 @@ public class TestActivity extends AppCompatActivity {
                         if (!bluetooth.mBluetoothAdapter.isEnabled()) {
                             btIsOn=false;
                             bluetooth.isBtConnected=false;
+                            if(bluetooth.btSocket!=null)
+                                bluetooth.btSocket.close();
+                            if(bluetooth.btInputStream != null)
+                                bluetooth.btInputStream.close();
+                            if(bluetooth.btOutputStream != null)
+                                bluetooth.btOutputStream.close();
                         }else {
                             btIsOn=true;
+                            /*if(bluetooth.btSocket!=null) {
+                                if (bluetooth.btSocket.isConnected()) { //TODO: dodać sprawdzanie tego
+                                    bluetooth.isBtConnected = true;
+                                } else {
+                                    bluetooth.isBtConnected = false;
+                                }
+                            }*/
                         }
                     }else{
                         throw new Exception("No bluetooth adapter available");
@@ -281,12 +310,40 @@ public class TestActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     btIsOn=false;
+                    bluetooth.isBtConnected=false;
                 }
                 catch (Exception e){
                     e.printStackTrace();
                     btIsOn=false;
+                    bluetooth.isBtConnected=false;
                 }
             }
         }
     }
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                //... //Device found
+            }
+            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                bluetooth.isBtConnected=true;
+            }
+            else if (bluetooth.mBluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+               //... //Done searching
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
+               // ... //Device is about to disconnect
+               // bluetooth.isBtConnected=false;
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+               // ... //Device has disconnected
+                bluetooth.isBtConnected=false;
+            }
+        }
+    };
 }

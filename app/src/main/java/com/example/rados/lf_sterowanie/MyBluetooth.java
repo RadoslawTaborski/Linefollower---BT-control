@@ -24,11 +24,12 @@ import java.util.UUID;
 //TODO: odbieranie danych
 public class MyBluetooth {
     public BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothSocket btSocket = null;
+    public BluetoothSocket btSocket = null;
     public boolean isBtConnected = false;
     public boolean stopWorker = false;
-    OutputStream btOutputStream;
-    InputStream btInputStream;
+    public BluetoothDevice device=null;
+    public OutputStream btOutputStream=null;
+    public InputStream btInputStream=null;
     Thread workerThread;
     byte[] readBuffer;
     int readBufferPosition;
@@ -170,8 +171,8 @@ public class MyBluetooth {
             {
                 if (btSocket == null || !isBtConnected)
                 {
-                    BluetoothDevice dispositivo = mBluetoothAdapter.getRemoteDevice(address);//connects to the device's address and checks if it's available
-                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
+                    device = mBluetoothAdapter.getRemoteDevice(address);//connects to the device's address and checks if it's available
+                    btSocket = device.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                     btSocket.connect();//start connection
                     btOutputStream = btSocket.getOutputStream();
