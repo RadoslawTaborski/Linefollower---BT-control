@@ -1,13 +1,5 @@
 package com.example.rados.lf_sterowanie;
 
-import android.bluetooth.BluetoothA2dp;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothHeadset;
-import android.bluetooth.BluetoothHealth;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,9 +15,8 @@ import java.io.IOException;
 //TODO: Dodanie kalibracji (sprawdzenie czy nie jest w eeprom)
 //TODO: Sprawdzanie czy BT jest włączone
 public class TestActivity extends AppCompatActivity {
-    public static MyBluetooth bluetooth;
+    public MyBluetooth bluetooth;
     public boolean auto=false;
-    public boolean btIsOn=false;
     TextView textRight;
     TextView textLeft;
     TextView textSpeed;
@@ -89,22 +80,33 @@ public class TestActivity extends AppCompatActivity {
         chrome.setText("00:00:0");
         info.setText("Sterowanie manualne");
 
+        MyBluetooth.IUpdateUiAfterReceivingData update=new MyBluetooth.IUpdateUiAfterReceivingData() {
+            @Override
+            public void updateUI(String data) {
+                info.setText(data);
+            }
+        };
+
         if(bluetooth==null){
-            bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2");
+            bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
         }else {
-            bluetooth.SetActivityAnDContext(TestActivity.this,getApplicationContext());
+            bluetooth.setActivityAnDContext(TestActivity.this,getApplicationContext(),update);
         }
 
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(mReceiver, filter);
-
-        Runnable runner = new MyRun();
-        Thread thread=new Thread(runner);
-        thread.start();
+        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateUiAfterChangingBluetoothStatus() {
+            @Override
+            public void updateUI() {
+                if (bluetooth.isBtTurnedOn()) {
+                    if (bluetooth.isBtConnected()) {
+                        btnConnect.setText("DISCONNECT");
+                    } else {
+                        btnConnect.setText("CONNECT");
+                    }
+                } else {
+                    btnConnect.setText("TURN ON BLUETOOTH");
+                }
+            }
+        });
     }
 
     public void changedClick(View v){
@@ -184,7 +186,7 @@ public class TestActivity extends AppCompatActivity {
     public void startClick(View v)throws IOException{
         chrome.setBase(SystemClock.elapsedRealtime()+timeWhenStopped);
         chrome.start();
-        if(bluetooth.isBtConnected)
+        if(bluetooth.isBtConnected())
             try
             {
                 bluetooth.sendData("7");
@@ -195,7 +197,7 @@ public class TestActivity extends AppCompatActivity {
     public void stopClick(View v) {
         chrome.stop();
         timeWhenStopped=0;
-        if(bluetooth.isBtConnected) {
+        if(bluetooth.isBtConnected()) {
             try
             {
                 bluetooth.sendData("0");
@@ -215,18 +217,18 @@ public class TestActivity extends AppCompatActivity {
     }
 
     public void connectClick(View v) {
-        if(btIsOn) {
-            if (bluetooth.isBtConnected) {
+        if(bluetooth.isBtTurnedOn()) {
+            if (bluetooth.isBtConnected()) {
                 try
                 {
-                    bluetooth.Disconnect();
+                    bluetooth.disconnect();
                 }
                 catch (IOException ex) { }
 
             } else {
                 try
                 {
-                    bluetooth.Connect(true);
+                    bluetooth.connect();
                 }
                 catch (IOException ex) { }
             }
@@ -234,7 +236,6 @@ public class TestActivity extends AppCompatActivity {
             try
             {
                 bluetooth.turnOnBT();
-                btIsOn=true;
             }
             catch (Exception ex) { }
 
@@ -253,97 +254,9 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
-
     private void msg(String s)
     {
         Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
     }
 
-    public class MyRun implements Runnable {
-        @Override
-        public void run() {
-            while(true) {
-                try {
-                    Thread.sleep(300);
-                    if(bluetooth.mBluetoothAdapter != null) {
-                        if (!bluetooth.mBluetoothAdapter.isEnabled()) {
-                            btIsOn=false;
-                            bluetooth.isBtConnected=false;
-                            if(bluetooth.btSocket!=null)
-                                bluetooth.btSocket.close();
-                            if(bluetooth.btInputStream != null)
-                                bluetooth.btInputStream.close();
-                            if(bluetooth.btOutputStream != null)
-                                bluetooth.btOutputStream.close();
-                        }else {
-                            btIsOn=true;
-                            /*if(bluetooth.btSocket!=null) {
-                                if (bluetooth.btSocket.isConnected()) { //TODO: dodać sprawdzanie tego
-                                    bluetooth.isBtConnected = true;
-                                } else {
-                                    bluetooth.isBtConnected = false;
-                                }
-                            }*/
-                        }
-                    }else{
-                        throw new Exception("No bluetooth adapter available");
-                    }
-                    Thread UIthread=new Thread(new Runnable() {
-                        public void run() {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (btIsOn) {
-                                        if (bluetooth.isBtConnected) {
-                                            btnConnect.setText("DISCONNECT");
-                                        } else {
-                                            btnConnect.setText("CONNECT");
-                                        }
-                                    } else {
-                                        btnConnect.setText("TURN ON BLUETOOTH");
-                                    }
-                                }
-                            });
-                        }
-                    });
-                    UIthread.start();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    btIsOn=false;
-                    bluetooth.isBtConnected=false;
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                    btIsOn=false;
-                    bluetooth.isBtConnected=false;
-                }
-            }
-        }
-    }
-
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                //... //Device found
-            }
-            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-                bluetooth.isBtConnected=true;
-            }
-            else if (bluetooth.mBluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-               //... //Done searching
-            }
-            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
-               // ... //Device is about to disconnect
-               // bluetooth.isBtConnected=false;
-            }
-            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-               // ... //Device has disconnected
-                bluetooth.isBtConnected=false;
-            }
-        }
-    };
 }

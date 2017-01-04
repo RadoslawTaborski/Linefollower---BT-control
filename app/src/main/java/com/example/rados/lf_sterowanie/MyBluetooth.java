@@ -5,61 +5,89 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
 import java.util.UUID;
 
-/**
- * Created by rados on 19.12.2016.
- */
-
-//TODO: sprawdzanie czy bluetooth jest sparowany
-//TODO: odbieranie danych
 public class MyBluetooth {
-    public BluetoothAdapter mBluetoothAdapter = null;
-    public BluetoothSocket btSocket = null;
-    public boolean isBtConnected = false;
-    public boolean stopWorker = false;
-    public BluetoothDevice device=null;
-    public OutputStream btOutputStream=null;
-    public InputStream btInputStream=null;
-    Thread workerThread;
-    byte[] readBuffer;
-    int readBufferPosition;
-    private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private String address = null;
+    private static boolean btConnected = false;
+    private static boolean btTurnedOn =false;
+    private static boolean stopWorker = false;
+    private static BluetoothAdapter btAdapter;
+    private static BluetoothSocket btSocket;
+    private static OutputStream btOutputStream;
+    private static InputStream btInputStream;
+    private final UUID DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static String address;
 
+    private Activity activity;
+    private Context context;
+    private byte[] readBuffer;
+    private int readBufferPosition;
     private ProgressDialog progress;
-    Activity activity=null;
-    Context context=null;
+    private IUpdateUiAfterReceivingData iUpdateReceiveUI;
+
+    public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update)
+    {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        setActivityAnDContext(act,con,update);
+        setAddress(add);
+    }
 
     public MyBluetooth(Activity act, Context con, String add)
     {
-        SetActivityAnDContext(act,con);
-        SetAddress(add);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        setActivityAnDContext(act,con,null);
+        setAddress(add);
     }
 
-    public void SetActivityAnDContext(Activity act, Context con){
+    public void setActivityAnDContext(Activity act, Context con, IUpdateUiAfterReceivingData update){
         activity=act;
         context=con;
+        setMethodToUpdateUiAfterReceivingData(update);
     }
 
-    public void SetAddress(String add){
+    public void setActivityAnDContext(Activity act, Context con){
+        activity=act;
+        context=con;
+        setMethodToUpdateUiAfterReceivingData(null);
+    }
+
+    public boolean isBtConnected(){
+        return btConnected;
+    }
+
+    public boolean isBtTurnedOn(){
+        return btTurnedOn;
+    }
+
+    private void setMethodToUpdateUiAfterReceivingData(IUpdateUiAfterReceivingData update){
+        if(update==null){
+            iUpdateReceiveUI=new IUpdateUiAfterReceivingData() {
+                @Override
+                public void updateUI(String data) {
+                }
+            };
+        }else{
+            iUpdateReceiveUI=update;
+        }
+    }
+
+    private void setAddress(String add){
         address=add;
     }
 
     public void turnOnBT() throws Exception
     {
-        if(mBluetoothAdapter != null) {
-            if (!mBluetoothAdapter.isEnabled()) {
+        if(btAdapter != null) {
+            if (!btAdapter.isEnabled()) {
                 Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 activity.startActivityForResult(enableBluetooth,0);
             }
@@ -70,9 +98,8 @@ public class MyBluetooth {
 
     private void beginListenForData()
     {
-        final Handler handler = new Handler();
         final byte delimiter = 10; //This is the ASCII code for a newline character
-
+        Thread workerThread;
         stopWorker = false;
         readBufferPosition = 0;
         readBuffer = new byte[1024];
@@ -99,14 +126,18 @@ public class MyBluetooth {
                                     final String data = new String(encodedBytes, "US-ASCII");
                                     readBufferPosition = 0;
 
-                                    handler.post(new Runnable()
-                                    {
-                                        public void run()
-                                        {
-                                            //myLabel.setText(data);
-                                            //lblReceived.setText(data);
+                                    Thread uiThread=new Thread(new Runnable() {
+                                        public void run() {
+                                            activity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    iUpdateReceiveUI.updateUI(data);
+                                                }
+                                            });
                                         }
                                     });
+
+                                    uiThread.start();
                                 }
                                 else
                                 {
@@ -131,9 +162,9 @@ public class MyBluetooth {
         btOutputStream.write(msg.getBytes());
     }
 
-    void Disconnect() throws IOException
+    void disconnect() throws IOException
     {
-        isBtConnected=false;
+        btConnected =false;
         stopWorker = true;
         btOutputStream.close();
         btInputStream.close();
@@ -141,22 +172,27 @@ public class MyBluetooth {
     }
 
 
-    public void Connect(boolean receive) throws IOException{
-        new ConnectBT().execute();
-       /* if(receive){
-            beginListenForData();
-        }*/
+    public void connect() throws IOException{
+        new ConnectBluetooth().execute();
     }
 
-    private void msg(String s)
+    public void updateUiAfterChangingBluetoothStatus(IUpdateUiAfterChangingBluetoothStatus update)
+    {
+        Runnable runner = new BluetoothStatusUpdater(update);
+        Thread thread=new Thread(runner);
+        thread.start();
+    }
+
+    private void toastMsg(String s)
     {
         Toast.makeText(context,s,Toast.LENGTH_LONG).show();
     }
 
+    /**********************************************************************************************/
 
-    private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
+    private class ConnectBluetooth extends AsyncTask<Void, Void, Void>  // UI thread
     {
-        private boolean ConnectSuccess = true; //if it's here, it's almost connected
+        private boolean connectSuccess = true; //if it's here, it's almost connected
 
         @Override
         protected void onPreExecute()
@@ -167,21 +203,21 @@ public class MyBluetooth {
         @Override
         protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
         {
-            try
-            {
-                if (btSocket == null || !isBtConnected)
-                {
-                    device = mBluetoothAdapter.getRemoteDevice(address);//connects to the device's address and checks if it's available
-                    btSocket = device.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
+            try {
+                if (btSocket == null || !btConnected) {
+                    BluetoothDevice btDevice;
+                    btDevice = btAdapter.getRemoteDevice(address);//connects to the device's address and checks if it's available
+                    btSocket = btDevice.createInsecureRfcommSocketToServiceRecord(DEVICE_UUID);//create a RFCOMM (SPP) connection
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                     btSocket.connect();//start connection
                     btOutputStream = btSocket.getOutputStream();
                     btInputStream = btSocket.getInputStream();
+                    beginListenForData();
                 }
             }
             catch (IOException e)
             {
-                ConnectSuccess = false;//if the try failed, you can check the exception here
+                connectSuccess = false;//if the try failed, you can check the exception here
             }
             return null;
         }
@@ -190,17 +226,98 @@ public class MyBluetooth {
         {
             super.onPostExecute(result);
 
-            if (!ConnectSuccess)
+            if (!connectSuccess)
             {
-                msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
-                activity.finish();
+                toastMsg("Connection Failed");
+                activity.finish(); //TODO: może być konieczne
             }
             else
             {
-                msg("Connected.");
-                isBtConnected = true;
+                btConnected = true;
             }
             progress.dismiss();
         }
+    }
+
+    /**********************************************************************************************/
+
+    private class BluetoothStatusUpdater implements Runnable {
+        private IUpdateUiAfterChangingBluetoothStatus iUpdateUI;
+        private IntentFilter filter;
+
+        private final BroadcastReceiver M_RECEIVER = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && !btConnected) {
+                    btConnected =true;
+                    toastMsg("Connected");
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) {
+                    btConnected =false;
+                    toastMsg("Disconnected");
+                }
+            }
+        };
+
+        public BluetoothStatusUpdater(IUpdateUiAfterChangingBluetoothStatus update){
+            iUpdateUI = update;
+            filter = new IntentFilter();
+            filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+            context.registerReceiver(M_RECEIVER, filter);
+        }
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    Thread.sleep(300);
+                    if(btAdapter != null) {
+                        if (!btAdapter.isEnabled()) {
+                            btTurnedOn =false;
+                            btConnected =false;
+                            if(btSocket!=null)
+                                btSocket.close();
+                            if(btInputStream != null)
+                                btInputStream.close();
+                            if(btOutputStream != null)
+                                btOutputStream.close();
+                        }else {
+                            btTurnedOn =true;
+                        }
+                    }else{
+                        throw new Exception("No bluetooth adapter available");
+                    }
+                    Thread uiThread=new Thread(new Runnable() {
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    iUpdateUI.updateUI();
+                                }
+                            });
+                        }
+                    });
+                    uiThread.start();
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                btTurnedOn =false;
+                btConnected =false;
+            }
+        }
+    }
+
+    /**********************************************************************************************/
+
+    public interface IUpdateUiAfterChangingBluetoothStatus {
+        void updateUI();
+    }
+
+    /**********************************************************************************************/
+
+    public interface IUpdateUiAfterReceivingData {
+        void updateUI(String data);
     }
 }
