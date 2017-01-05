@@ -26,6 +26,7 @@ public class MyBluetooth {
     private static InputStream btInputStream;
     private final UUID DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String address;
+    private static Thread workerThread;
 
     private Activity activity;
     private Context context;
@@ -52,6 +53,10 @@ public class MyBluetooth {
         activity=act;
         context=con;
         setMethodToUpdateUiAfterReceivingData(update);
+        if(isBtConnected()){
+            workerThread.interrupt();
+            beginListenForData();
+        }
     }
 
     public void setActivityAnDContext(Activity act, Context con){
@@ -99,7 +104,6 @@ public class MyBluetooth {
     private void beginListenForData()
     {
         final byte delimiter = 10; //This is the ASCII code for a newline character
-        Thread workerThread;
         stopWorker = false;
         readBufferPosition = 0;
         readBuffer = new byte[1024];
@@ -148,6 +152,7 @@ public class MyBluetooth {
                     }
                     catch (IOException ex)
                     {
+                        ex.printStackTrace();
                         stopWorker = true;
                     }
                 }
@@ -165,6 +170,7 @@ public class MyBluetooth {
     void disconnect() throws IOException
     {
         btConnected =false;
+        workerThread.interrupt();
         stopWorker = true;
         btOutputStream.close();
         btInputStream.close();
@@ -217,6 +223,7 @@ public class MyBluetooth {
             }
             catch (IOException e)
             {
+                e.printStackTrace();
                 connectSuccess = false;//if the try failed, you can check the exception here
             }
             return null;
@@ -254,8 +261,14 @@ public class MyBluetooth {
                     btConnected =true;
                     toastMsg("Connected");
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) {
-                    btConnected =false;
-                    toastMsg("Disconnected");
+                    try
+                    {
+                        disconnect();
+                        toastMsg("Disconnected");
+                    }
+                    catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         };

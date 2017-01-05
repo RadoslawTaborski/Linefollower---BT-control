@@ -37,7 +37,7 @@ public class TestActivity extends AppCompatActivity {
     CheckBox cbAuto;
     SeekBar sbSpeed;
     SeekBar sbTurn;
-    chronometer.Chronometer chrome;
+    chronometer.Chronometer chrono;
     int speed=0;
     int RCurve=0;
     int LCurve=0;
@@ -60,7 +60,7 @@ public class TestActivity extends AppCompatActivity {
         sbSpeed=(SeekBar)findViewById(R.id.sbSpeed);
         sbTurn=(SeekBar)findViewById(R.id.sbTurn);
 
-        chrome=(chronometer.Chronometer)findViewById(R.id.chronometer);
+        chrono =(chronometer.Chronometer)findViewById(R.id.chronometer);
 
         btnLeftR=(Button)findViewById(R.id.btnLeftR);
         btnRightR=(Button)findViewById(R.id.btnRightR);
@@ -77,7 +77,7 @@ public class TestActivity extends AppCompatActivity {
         textLeft.setVisibility(View.INVISIBLE);
         textRight.setVisibility(View.INVISIBLE);
         textSpeed.setVisibility(View.INVISIBLE);
-        chrome.setText("00:00:0");
+        chrono.setText("00:00:0");
         info.setText("Sterowanie manualne");
 
         MyBluetooth.IUpdateUiAfterReceivingData update=new MyBluetooth.IUpdateUiAfterReceivingData() {
@@ -184,25 +184,29 @@ public class TestActivity extends AppCompatActivity {
     }
 
     public void startClick(View v)throws IOException{
-        chrome.setBase(SystemClock.elapsedRealtime()+timeWhenStopped);
-        chrome.start();
+        chrono.setBase(SystemClock.elapsedRealtime()+timeWhenStopped);
+        chrono.start();
         if(bluetooth.isBtConnected())
             try
             {
                 bluetooth.sendData("7");
             }
-            catch (IOException ex) { }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
     }
 
     public void stopClick(View v) {
-        chrome.stop();
+        chrono.stop();
         timeWhenStopped=0;
         if(bluetooth.isBtConnected()) {
             try
             {
                 bluetooth.sendData("0");
             }
-            catch (IOException ex) { }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
 
     }
@@ -212,8 +216,8 @@ public class TestActivity extends AppCompatActivity {
     }
 
     public void pauseClick(View v){
-        timeWhenStopped = chrome.getBase() - SystemClock.elapsedRealtime();
-        chrome.stop();
+        timeWhenStopped = chrono.getBase() - SystemClock.elapsedRealtime();
+        chrono.stop();
     }
 
     public void connectClick(View v) {
@@ -223,22 +227,27 @@ public class TestActivity extends AppCompatActivity {
                 {
                     bluetooth.disconnect();
                 }
-                catch (IOException ex) { }
+                catch (IOException ex) {
+                    ex.printStackTrace();
+                }
 
             } else {
                 try
                 {
                     bluetooth.connect();
                 }
-                catch (IOException ex) { }
+                catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }else{
             try
             {
                 bluetooth.turnOnBT();
             }
-            catch (Exception ex) { }
-
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

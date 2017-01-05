@@ -5,7 +5,7 @@ package com.example.rados.lf_sterowanie;
         import android.view.View;
 
 public class MenuActivity extends AppCompatActivity {
-    public static MyBluetooth bluetooth;
+    public MyBluetooth bluetooth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,10 +21,13 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void updateUI() { }
         });
-
     }
 
-    public void bntClick(View view) {
+    public void testClick(View view) {
         startActivity(new Intent(MenuActivity.this,TestActivity.class));
+    }
+
+    public void competitionClick(View view) {
+        startActivity(new Intent(MenuActivity.this,CompetitionActivity.class));
     }
 }

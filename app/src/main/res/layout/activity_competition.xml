@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_competition"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp"
+    tools:context="com.example.rados.lf_sterowanie.CompetitionActivity">
+
+    <chronometer.Chronometer
+        android:id="@+id/chronometer2"
+        android:height="50dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text=""
+        android:gravity="center"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="KP"
+        android:width="100dp"
+        android:height="30dp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnStop2"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView2" />
+
+    <TextView
+        android:text="@string/SPEED"
+        android:width="100dp"
+        android:height="30dp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView3" />
+
+    <TextView
+        android:text="KD"
+        android:width="100dp"
+        android:height="30dp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnStop2"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/textView4" />
+
+    <TextView
+        android:text="0"
+        android:width="100dp"
+        android:height="30dp"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSpeed2"
+        android:layout_below="@+id/textView3"
+        android:layout_alignStart="@+id/textView3" />
+
+    <TextView
+        android:text="0"
+        android:width="100dp"
+        android:height="30dp"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvKD2"
+        android:layout_below="@+id/textView4"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="0"
+        android:width="100dp"
+        android:height="30dp"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvKP2"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="@string/Connection"
+        android:width="300dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="connectClick"
+        android:id="@+id/btnConnect2"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:height="30dp"
+        android:textSize="14sp"/>
+
+    <Button
+        android:text="ODCZYT2"
+        android:width="120dp"
+        android:height="60dp"
+        android:onClick="read2Click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnRead2"
+        android:layout_alignBaseline="@+id/btnClear2"
+        android:layout_alignBottom="@+id/btnClear2"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="ODCZYT"
+        android:width="120dp"
+        android:height="60dp"
+        android:onClick="readClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnRead"
+        android:layout_below="@+id/tvKP2"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text=""
+        android:enabled="false"
+        android:ems="10"
+        android:layout_below="@+id/btnRead2"
+        android:id="@+id/editText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/btnConnect2" />
+
+    <Button
+        android:text="@string/CLEAR"
+        android:width="120dp"
+        android:height="60dp"
+        android:onClick="clearClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnClear2"
+        android:layout_alignBaseline="@+id/btnRead"
+        android:layout_alignBottom="@+id/btnRead"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/Start"
+        android:height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startClick"
+        android:id="@+id/btnStart2"
+        android:width="200dp"
+        android:layout_below="@+id/chronometer2"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/Stop"
+        android:height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="stopClick"
+        android:id="@+id/btnStop2"
+        android:width="200dp"
+        android:layout_below="@+id/btnStart2"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
