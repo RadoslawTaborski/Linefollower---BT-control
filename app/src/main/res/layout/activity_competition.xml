@@ -21,7 +21,7 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="KP"
+        android:text="@string/KP"
         android:width="100dp"
         android:height="30dp"
         android:gravity="center"
@@ -43,7 +43,7 @@
         android:id="@+id/textView3" />
 
     <TextView
-        android:text="KD"
+        android:text="@string/KD"
         android:width="100dp"
         android:height="30dp"
         android:gravity="center"
@@ -102,7 +102,7 @@
         android:textSize="14sp"/>
 
     <Button
-        android:text="ODCZYT2"
+        android:text="@string/READ2"
         android:width="120dp"
         android:height="60dp"
         android:onClick="read2Click"
@@ -114,7 +114,7 @@
         android:layout_alignParentEnd="true" />
 
     <Button
-        android:text="ODCZYT"
+        android:text="@string/READ"
         android:width="120dp"
         android:height="60dp"
         android:onClick="readClick"
@@ -135,7 +135,8 @@
         android:id="@+id/editText"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/btnConnect2" />
+        android:layout_above="@+id/btnConnect2"
+        tools:textSize="8sp" />
 
     <Button
         android:text="@string/CLEAR"

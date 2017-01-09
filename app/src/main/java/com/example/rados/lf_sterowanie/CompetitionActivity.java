@@ -3,10 +3,13 @@ package com.example.rados.lf_sterowanie;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -42,10 +45,18 @@ public class CompetitionActivity extends AppCompatActivity {
         chrono=(chronometer.Chronometer)findViewById(R.id.chronometer2);
         editText=(EditText)findViewById(R.id.editText);
 
+
         MyBluetooth.IUpdateUiAfterReceivingData update=new MyBluetooth.IUpdateUiAfterReceivingData() {
             @Override
             public void updateUI(String data) {
-                editText.setText(data);
+                if(data.length()==16){
+                    tvKP.setText(Integer.parseInt(data.substring(0,5)));
+                    tvKD.setText(Integer.parseInt(data.substring(5,10)));
+                    tvKP.setText(Integer.parseInt(data.substring(10,15)));
+                }else {
+                    if(data.charAt(data.length())=='\r')
+                        editText.setText(data);
+                }
             }
         };
 
@@ -61,11 +72,35 @@ public class CompetitionActivity extends AppCompatActivity {
                 if (bluetooth.isBtTurnedOn()) {
                     if (bluetooth.isBtConnected()) {
                         btnConnect.setText("DISCONNECT");
+                        btnStart.setEnabled(true);
+                        btnStop.setEnabled(false);
+                        btnClear.setEnabled(true);
+                        btnRead.setEnabled(false);
+                        btnRead2.setEnabled(false);
+                        btnConnect.setEnabled(true);
+                        try {
+                            bluetooth.sendData("?");
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                            msg("Error");
+                        }
                     } else {
                         btnConnect.setText("CONNECT");
+                        btnStart.setEnabled(false);
+                        btnStop.setEnabled(false);
+                        btnClear.setEnabled(false);
+                        btnRead.setEnabled(false);
+                        btnRead2.setEnabled(false);
+                        btnConnect.setEnabled(true);
                     }
                 } else {
                     btnConnect.setText("TURN ON BLUETOOTH");
+                    btnStart.setEnabled(false);
+                    btnStop.setEnabled(false);
+                    btnClear.setEnabled(false);
+                    btnRead.setEnabled(false);
+                    btnRead2.setEnabled(false);
+                    btnConnect.setEnabled(true);
                 }
             }
         });
@@ -75,40 +110,90 @@ public class CompetitionActivity extends AppCompatActivity {
     public void startClick(View v) {
         chrono.setBase(SystemClock.elapsedRealtime()+timeWhenStopped);
         chrono.start();
-        if(bluetooth.isBtConnected())
-            try
-            {
-                bluetooth.sendData("7");
-            }
-            catch (IOException ex) {
+        if(bluetooth.isBtConnected()) {
+            try {
+                bluetooth.sendData("8");
+                btnStart.setEnabled(false);
+                btnStop.setEnabled(true);
+                btnClear.setEnabled(false);
+                btnRead.setEnabled(true);
+                btnRead2.setEnabled(false);
+                btnConnect.setEnabled(false);
+            } catch (IOException ex) {
                 ex.printStackTrace();
+                msg("Error");
             }
+        }
     }
 
     public void stopClick(View v) {
         chrono.stop();
         timeWhenStopped=0;
         if(bluetooth.isBtConnected()) {
-            try
-            {
+            try {
                 bluetooth.sendData("0");
-            }
-            catch (IOException ex) {
+                btnStart.setEnabled(true);
+                btnStop.setEnabled(false);
+                btnClear.setEnabled(true);
+                btnRead.setEnabled(false);
+                btnRead2.setEnabled(false);
+                btnConnect.setEnabled(true);
+            } catch (IOException ex) {
                 ex.printStackTrace();
+                msg("Error");
             }
         }
     }
 
     public void clearClick(View v) {
-
+        if(bluetooth.isBtConnected()) {
+            try {
+                bluetooth.sendData("7");
+                btnStart.setEnabled(false);
+                btnStop.setEnabled(true);
+                btnClear.setEnabled(false);
+                btnRead.setEnabled(false);
+                btnRead2.setEnabled(false);
+                btnConnect.setEnabled(false);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                msg("Error");
+            }
+        }
     }
 
     public void readClick(View v) {
-
+        if(bluetooth.isBtConnected()) {
+            try {
+                bluetooth.sendData("3");
+                btnStart.setEnabled(false);
+                btnStop.setEnabled(true);
+                btnClear.setEnabled(false);
+                btnRead.setEnabled(false);
+                btnRead2.setEnabled(true);
+                btnConnect.setEnabled(false);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                msg("Error");
+            }
+        }
     }
 
-    public void read2Click(View v) {
-
+    public void read2Click(View v) { //TODO: zatrzymywanie odczytu
+        if(bluetooth.isBtConnected()) {
+            try {
+                bluetooth.sendData("z");
+                btnStart.setEnabled(false);
+                btnStop.setEnabled(true);
+                btnClear.setEnabled(false);
+                btnRead.setEnabled(true);
+                btnRead2.setEnabled(false);
+                btnConnect.setEnabled(false);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                msg("Error");
+            }
+        }
     }
 
     public void connectClick(View v) {
@@ -139,5 +224,24 @@ public class CompetitionActivity extends AppCompatActivity {
                 ex.printStackTrace();
             }
         }
+    }
+
+    private void msg(String s)
+    {
+        Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(bluetooth.isBtConnected()) {
+            try {
+                bluetooth.sendData("0");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                msg("Error");
+            }
+        }
+        finish();
+        return;
     }
 }

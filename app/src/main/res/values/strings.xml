@@ -28,5 +28,10 @@
     <string name="SAVE">SAVE</string>
     <string name="CLEAR">CLEAR</string>
 
+    <string name="KP">KP</string>
+    <string name="KD">KD</string>
+    <string name="READ">READ</string>
+    <string name="READ2">READ STOP</string>
+
     <string name="Competition">COMPETITION</string>
 </resources>

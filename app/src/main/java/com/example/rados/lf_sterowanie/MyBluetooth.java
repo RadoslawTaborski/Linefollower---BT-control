@@ -251,6 +251,8 @@ public class MyBluetooth {
     private class BluetoothStatusUpdater implements Runnable {
         private IUpdateUiAfterChangingBluetoothStatus iUpdateUI;
         private IntentFilter filter;
+        private boolean first=true;
+        private boolean[] lastState={isBtTurnedOn(),isBtConnected()};
 
         private final BroadcastReceiver M_RECEIVER = new BroadcastReceiver() {
             @Override
@@ -302,17 +304,22 @@ public class MyBluetooth {
                     }else{
                         throw new Exception("No bluetooth adapter available");
                     }
-                    Thread uiThread=new Thread(new Runnable() {
-                        public void run() {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    iUpdateUI.updateUI();
-                                }
-                            });
-                        }
-                    });
-                    uiThread.start();
+                    if(isBtTurnedOn()!=lastState[0] || isBtConnected()!=lastState[1] || first) {
+                        Thread uiThread = new Thread(new Runnable() {
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        iUpdateUI.updateUI();
+                                    }
+                                });
+                            }
+                        });
+                        uiThread.start();
+                        lastState[0]=isBtTurnedOn();
+                        lastState[1]=isBtConnected();
+                        first=false;
+                    }
                 }
             } catch (Exception e){
                 e.printStackTrace();
