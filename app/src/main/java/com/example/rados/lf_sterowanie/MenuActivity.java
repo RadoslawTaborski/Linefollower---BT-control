@@ -11,13 +11,13 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        if(bluetooth==null){
+        if(MyBluetooth.isEmpty()){
             bluetooth=new MyBluetooth(MenuActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2");
         }else {
             bluetooth.setActivityAnDContext(MenuActivity.this,getApplicationContext());
         }
 
-        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateUiAfterChangingBluetoothStatus() {
+        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
             @Override
             public void updateUI() { }
         });

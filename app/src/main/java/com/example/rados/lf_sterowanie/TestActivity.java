@@ -13,7 +13,7 @@ import java.io.IOException;
 
 
 //TODO: Dodanie kalibracji (sprawdzenie czy nie jest w eeprom)
-public class TestActivity extends AppCompatActivity {
+public class TestActivity extends AppCompatActivity implements ITaskDelegate {
     public MyBluetooth bluetooth;
     public boolean auto=false;
     TextView textRight;
@@ -152,13 +152,11 @@ public class TestActivity extends AppCompatActivity {
             }
         };
 
-        if(bluetooth==null){
-            bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
-        }else {
-            bluetooth.setActivityAnDContext(TestActivity.this,getApplicationContext(),update);
-        }
+        bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
+        if(bluetooth.isBtConnected())
+            afterConnecting();
 
-        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateUiAfterChangingBluetoothStatus() {
+        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
             @Override
             public void updateUI() {
                 if (bluetooth.isBtTurnedOn()) {
@@ -450,7 +448,9 @@ public class TestActivity extends AppCompatActivity {
             } else {
                 try
                 {
-                    bluetooth.connect();
+                    bluetooth.connect(this);
+                    //while(!bluetooth.isBtConnected());
+                    //afterConnecting();
                 }
                 catch (IOException ex) {
                     ex.printStackTrace();
@@ -539,12 +539,38 @@ public class TestActivity extends AppCompatActivity {
         if(bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData("0");
-                finish();
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
             }
         }
+        finish();
         return;
+    }
+
+    private void afterConnecting(){
+        boolean flag=false;
+        while(!flag) {
+            if (bluetooth.isBtTurnedOn()) {
+                if (bluetooth.isBtConnected()) {
+                    try {
+                        Thread.sleep(100);
+                        bluetooth.sendData(speedArray[sbSpeed.getProgress()]);
+                        bluetooth.sendData(turnArray[sbTurn.getProgress()]);
+                        flag=true;
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        msg("Error");
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void TaskCompletionResult(String msg){
+        afterConnecting();
     }
 }

@@ -20,7 +20,7 @@ public class MyBluetooth {
     private static boolean btConnected = false;
     private static boolean btTurnedOn =false;
     private static boolean stopWorker = false;
-    private static BluetoothAdapter btAdapter;
+    private static BluetoothAdapter btAdapter=null;
     private static BluetoothSocket btSocket;
     private static OutputStream btOutputStream;
     private static InputStream btInputStream;
@@ -34,6 +34,7 @@ public class MyBluetooth {
     private int readBufferPosition;
     private ProgressDialog progress;
     private IUpdateUiAfterReceivingData iUpdateReceiveUI;
+    private IUpdateAfterChangingBluetoothStatus iUpdateAfterChangingStatus;
 
     public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update)
     {
@@ -73,6 +74,14 @@ public class MyBluetooth {
         return btTurnedOn;
     }
 
+    public static boolean isEmpty(){
+        if(btAdapter==null) {
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     private void setMethodToUpdateUiAfterReceivingData(IUpdateUiAfterReceivingData update){
         if(update==null){
             iUpdateReceiveUI=new IUpdateUiAfterReceivingData() {
@@ -83,6 +92,13 @@ public class MyBluetooth {
         }else{
             iUpdateReceiveUI=update;
         }
+    }
+
+    public void updateUiAfterChangingBluetoothStatus(IUpdateAfterChangingBluetoothStatus update)
+    {
+        Runnable runner = new BluetoothStatusUpdater(update);
+        Thread thread=new Thread(runner);
+        thread.start();
     }
 
     private void setAddress(String add){
@@ -172,21 +188,18 @@ public class MyBluetooth {
         btConnected =false;
         workerThread.interrupt();
         stopWorker = true;
-        btOutputStream.close();
-        btInputStream.close();
-        btSocket.close();
+        if(btSocket!=null) {
+            if(btOutputStream!=null)
+                btOutputStream.close();
+            if(btInputStream!=null)
+                btInputStream.close();
+            btSocket.close();
+        }
     }
 
 
-    public void connect() throws IOException{
-        new ConnectBluetooth().execute();
-    }
-
-    public void updateUiAfterChangingBluetoothStatus(IUpdateUiAfterChangingBluetoothStatus update)
-    {
-        Runnable runner = new BluetoothStatusUpdater(update);
-        Thread thread=new Thread(runner);
-        thread.start();
+    public void connect(ITaskDelegate delegate) throws IOException{
+        new ConnectBluetooth(delegate).execute();
     }
 
     private void toastMsg(String s)
@@ -199,6 +212,11 @@ public class MyBluetooth {
     private class ConnectBluetooth extends AsyncTask<Void, Void, Void>  // UI thread
     {
         private boolean connectSuccess = true; //if it's here, it's almost connected
+        private ITaskDelegate delegate;
+
+        public ConnectBluetooth(ITaskDelegate _delegate){
+            delegate=_delegate;
+        }
 
         @Override
         protected void onPreExecute()
@@ -224,6 +242,7 @@ public class MyBluetooth {
             catch (IOException e)
             {
                 e.printStackTrace();
+                toastMsg("Error");
                 connectSuccess = false;//if the try failed, you can check the exception here
             }
             return null;
@@ -236,11 +255,15 @@ public class MyBluetooth {
             if (!connectSuccess)
             {
                 toastMsg("Connection Failed");
-                activity.finish(); //TODO: może być konieczne
+                activity.finish();
             }
             else
             {
                 btConnected = true;
+                delegate.TaskCompletionResult("");
+              //  synchronized(this) {
+              //      iUpdateAfterChangingStatus.executeAfterConnecting();
+              //  }
             }
             progress.dismiss();
         }
@@ -249,9 +272,9 @@ public class MyBluetooth {
     /**********************************************************************************************/
 
     private class BluetoothStatusUpdater implements Runnable {
-        private IUpdateUiAfterChangingBluetoothStatus iUpdateUI;
         private IntentFilter filter;
         private boolean first=true;
+        private boolean first2=isBtConnected();
         private boolean[] lastState={isBtTurnedOn(),isBtConnected()};
 
         private final BroadcastReceiver M_RECEIVER = new BroadcastReceiver() {
@@ -269,20 +292,22 @@ public class MyBluetooth {
                         toastMsg("Disconnected");
                     }
                     catch (IOException ex) {
+                        toastMsg("Error");
                         ex.printStackTrace();
                     }
                 }
             }
         };
 
-        public BluetoothStatusUpdater(IUpdateUiAfterChangingBluetoothStatus update){
-            iUpdateUI = update;
+        public BluetoothStatusUpdater(IUpdateAfterChangingBluetoothStatus update){
+            iUpdateAfterChangingStatus = update;
             filter = new IntentFilter();
             filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
             filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
             filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
             context.registerReceiver(M_RECEIVER, filter);
         }
+
         @Override
         public void run() {
             try {
@@ -292,12 +317,13 @@ public class MyBluetooth {
                         if (!btAdapter.isEnabled()) {
                             btTurnedOn =false;
                             btConnected =false;
-                            if(btSocket!=null)
+                            if(btSocket!=null) {
+                                if(btOutputStream!=null)
+                                    btOutputStream.close();
+                                if(btInputStream!=null)
+                                    btInputStream.close();
                                 btSocket.close();
-                            if(btInputStream != null)
-                                btInputStream.close();
-                            if(btOutputStream != null)
-                                btOutputStream.close();
+                            }
                         }else {
                             btTurnedOn =true;
                         }
@@ -310,12 +336,13 @@ public class MyBluetooth {
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        iUpdateUI.updateUI();
+                                        iUpdateAfterChangingStatus.updateUI();
                                     }
                                 });
                             }
                         });
                         uiThread.start();
+
                         lastState[0]=isBtTurnedOn();
                         lastState[1]=isBtConnected();
                         first=false;
@@ -323,7 +350,7 @@ public class MyBluetooth {
                 }
             } catch (Exception e){
                 e.printStackTrace();
-                btTurnedOn =false;
+                toastMsg("Error");
                 btConnected =false;
             }
         }
@@ -331,7 +358,7 @@ public class MyBluetooth {
 
     /**********************************************************************************************/
 
-    public interface IUpdateUiAfterChangingBluetoothStatus {
+    public interface IUpdateAfterChangingBluetoothStatus {
         void updateUI();
     }
 
@@ -340,4 +367,6 @@ public class MyBluetooth {
     public interface IUpdateUiAfterReceivingData {
         void updateUI(String data);
     }
+
+    /**********************************************************************************************/
 }

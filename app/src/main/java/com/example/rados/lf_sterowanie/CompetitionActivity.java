@@ -3,9 +3,7 @@ package com.example.rados.lf_sterowanie;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,8 +11,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-public class CompetitionActivity extends AppCompatActivity {
-    public MyBluetooth bluetooth;
+public class CompetitionActivity extends AppCompatActivity implements ITaskDelegate{
+    public static MyBluetooth bluetooth;
     TextView tvSpeed;
     TextView tvKP;
     TextView tvKD;
@@ -60,13 +58,11 @@ public class CompetitionActivity extends AppCompatActivity {
             }
         };
 
-        if(bluetooth==null){
-            bluetooth=new MyBluetooth(CompetitionActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
-        }else {
-            bluetooth.setActivityAnDContext(CompetitionActivity.this,getApplicationContext(),update);
-        }
+        bluetooth=new MyBluetooth(CompetitionActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
+        if(bluetooth.isBtConnected())
+            afterConnecting();
 
-        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateUiAfterChangingBluetoothStatus() {
+        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
             @Override
             public void updateUI() {
                 if (bluetooth.isBtTurnedOn()) {
@@ -78,12 +74,6 @@ public class CompetitionActivity extends AppCompatActivity {
                         btnRead.setEnabled(false);
                         btnRead2.setEnabled(false);
                         btnConnect.setEnabled(true);
-                       /* try {
-                            bluetooth.sendData("?"); //TODO: Trzeba gdzies to dodać
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                            msg("Error");
-                        }*/
                     } else {
                         btnConnect.setText("CONNECT");
                         btnStart.setEnabled(false);
@@ -209,7 +199,9 @@ public class CompetitionActivity extends AppCompatActivity {
             } else {
                 try
                 {
-                    bluetooth.connect();
+                    bluetooth.connect(this);
+                    //while(!bluetooth.isBtConnected());
+                    //afterConnecting();
                 }
                 catch (IOException ex) {
                     ex.printStackTrace();
@@ -236,12 +228,37 @@ public class CompetitionActivity extends AppCompatActivity {
         if(bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData("0");
-                finish();
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
             }
         }
+        finish();
         return;
+    }
+
+    private void afterConnecting(){
+        boolean flag=false;
+        while(!flag) {
+            if (bluetooth.isBtTurnedOn()) {
+                if (bluetooth.isBtConnected()) {
+                    try {
+                        Thread.sleep(100);
+                        bluetooth.sendData("?");
+                        flag=true;
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        msg("Error");
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void TaskCompletionResult(String msg){
+        afterConnecting();
     }
 }
