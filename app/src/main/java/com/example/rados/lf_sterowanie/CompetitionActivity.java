@@ -78,12 +78,12 @@ public class CompetitionActivity extends AppCompatActivity {
                         btnRead.setEnabled(false);
                         btnRead2.setEnabled(false);
                         btnConnect.setEnabled(true);
-                        try {
-                            bluetooth.sendData("?");
+                       /* try {
+                            bluetooth.sendData("?"); //TODO: Trzeba gdzies to dodać
                         } catch (IOException ex) {
                             ex.printStackTrace();
                             msg("Error");
-                        }
+                        }*/
                     } else {
                         btnConnect.setText("CONNECT");
                         btnStart.setEnabled(false);
@@ -236,12 +236,12 @@ public class CompetitionActivity extends AppCompatActivity {
         if(bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData("0");
+                finish();
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
             }
         }
-        finish();
         return;
     }
 }

@@ -13,7 +13,6 @@ import java.io.IOException;
 
 
 //TODO: Dodanie kalibracji (sprawdzenie czy nie jest w eeprom)
-//TODO: Sprawdzanie czy BT jest włączone
 public class TestActivity extends AppCompatActivity {
     public MyBluetooth bluetooth;
     public boolean auto=false;
@@ -173,13 +172,6 @@ public class TestActivity extends AppCompatActivity {
                         sbSpeed.setProgress(3);
                         tvTurn.setText("TURN = "+sbTurn.getProgress());
                         tvSpeed.setText("SPEED = "+sbSpeed.getProgress());
-                        try {
-                            bluetooth.sendData(turnArray[sbTurn.getProgress()]);
-                            bluetooth.sendData(speedArray[sbSpeed.getProgress()]);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                            msg("Error");
-                        }
                     } else {
                         btnConnect.setText("CONNECT");
                         setOthers(false,false);
@@ -547,12 +539,12 @@ public class TestActivity extends AppCompatActivity {
         if(bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData("0");
+                finish();
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
             }
         }
-        finish();
         return;
     }
 }
