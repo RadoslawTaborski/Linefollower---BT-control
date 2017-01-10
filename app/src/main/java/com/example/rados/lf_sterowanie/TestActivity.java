@@ -409,6 +409,7 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
             }else{
                 sbSpeed.setProgress(speedArray.length-1);
                 tvSpeed.setText("SPEED = "+ (speedArray.length-1));
+                bluetooth.sendData(speedArray[speedArray.length-1]);
             }
         }
         catch (IOException ex) {
