@@ -1,5 +1,6 @@
 package com.example.rados.lf_sterowanie;
 
+import android.content.pm.ActivityInfo;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_competition);
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         tvSpeed=(TextView)findViewById(R.id.tvSpeed2);
         tvKP=(TextView)findViewById(R.id.tvKP2);

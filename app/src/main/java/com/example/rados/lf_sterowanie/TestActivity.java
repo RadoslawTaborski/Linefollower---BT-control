@@ -1,5 +1,6 @@
 package com.example.rados.lf_sterowanie;
 
+import android.content.pm.ActivityInfo;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         textRight=(TextView)findViewById(R.id.textRight);
         textLeft=(TextView)findViewById(R.id.textLeft);
