@@ -26,8 +26,8 @@ public class MyBluetooth {
     private static InputStream btInputStream;
     private final UUID DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String address;
-    private static Thread workerThread;
 
+    private Thread workerThread;
     private Activity activity;
     private Context context;
     private byte[] readBuffer;
@@ -36,31 +36,28 @@ public class MyBluetooth {
     private IUpdateUiAfterReceivingData iUpdateReceiveUI;
     private IUpdateAfterChangingBluetoothStatus iUpdateAfterChangingStatus;
 
-    public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update)
-    {
+    public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update) {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        setActivityAnDContext(act,con,update);
+        setActivityAndContext(act,con,update);
         setAddress(add);
     }
 
-    public MyBluetooth(Activity act, Context con, String add)
-    {
+    public MyBluetooth(Activity act, Context con, String add) {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        setActivityAnDContext(act,con,null);
+        setActivityAndContext(act,con,null);
         setAddress(add);
     }
 
-    public void setActivityAnDContext(Activity act, Context con, IUpdateUiAfterReceivingData update){
+    public void setActivityAndContext(Activity act, Context con, IUpdateUiAfterReceivingData update){
         activity=act;
         context=con;
         setMethodToUpdateUiAfterReceivingData(update);
         if(isBtConnected()){
-            workerThread.interrupt();
             beginListenForData();
         }
     }
 
-    public void setActivityAnDContext(Activity act, Context con){
+    public void setActivityAndContext(Activity act, Context con){
         activity=act;
         context=con;
         setMethodToUpdateUiAfterReceivingData(null);
@@ -202,6 +199,12 @@ public class MyBluetooth {
         new ConnectBluetooth(delegate).execute();
     }
 
+    public void clean() throws IOException{
+        if(isBtTurnedOn() && isBtConnected()) {
+            btOutputStream.flush();
+        }
+    }
+
     private void toastMsg(String s)
     {
         Toast.makeText(context,s,Toast.LENGTH_LONG).show();
@@ -260,10 +263,7 @@ public class MyBluetooth {
             else
             {
                 btConnected = true;
-                delegate.TaskCompletionResult("");
-              //  synchronized(this) {
-              //      iUpdateAfterChangingStatus.executeAfterConnecting();
-              //  }
+                //delegate.TaskCompletionResult("");
             }
             progress.dismiss();
         }

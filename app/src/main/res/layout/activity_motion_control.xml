@@ -4,10 +4,10 @@
     android:id="@+id/activity_motion_control"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="5dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
     tools:context="com.example.rados.lf_sterowanie.MotionControlActivity">
 
     <TextView
@@ -16,20 +16,19 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvSpeed3"
         android:gravity="center"
-        android:layout_alignBottom="@+id/sbSpeed3"
-        android:layout_alignStart="@+id/button" />
+        android:layout_alignBaseline="@+id/tbtnR"
+        android:layout_alignBottom="@+id/tbtnR"
+        android:layout_toEndOf="@+id/tbtnR" />
 
-    <Button
-        android:text="@string/Connection"
-        android:width="300dp"
+    <SeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="connectClick"
-        android:id="@+id/btnConnect3"
-        android:height="30dp"
-        android:textSize="14sp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/button" />
+        android:width="300dp"
+        android:id="@+id/sbSpeed3"
+        android:layout_alignTop="@+id/tvSpeed3"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/tvSpeed3"
+        android:progress="1" />
 
     <Button
         android:text="@string/Start"
@@ -38,19 +37,12 @@
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:layout_above="@+id/btnConnect3"
-        android:layout_centerHorizontal="true" />
-
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="300dp"
-        android:id="@+id/sbSpeed3"
-        android:layout_marginBottom="27dp"
-        android:layout_above="@+id/button"
-        android:layout_alignEnd="@+id/button"
-        android:layout_toEndOf="@+id/tvSpeed3" />
+        android:id="@+id/btnStart3"
+        android:onClick="startClick"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/tvValue"
+        android:layout_alignParentEnd="true" />
 
     <ToggleButton
         android:text="R"
@@ -59,11 +51,58 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tbtnR"
-        android:textOff="R OFF"
-        android:textOn="R ON"
-        android:layout_marginStart="16dp"
+        android:textOff="R ON"
+        android:textOn="R OFF"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/button" />
+        android:layout_above="@+id/btnStart3" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvValue"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Z"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/zText"
+        android:layout_alignBottom="@+id/btnConnect3"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/btnConnect3" />
+
+    <TextView
+        android:text="Y"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/yText"
+        android:layout_alignBaseline="@+id/btnConnect3"
+        android:layout_alignBottom="@+id/btnConnect3"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/btnConnect3" />
+
+    <TextView
+        android:text="X"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/xText"
+        android:layout_above="@+id/yText"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/btnConnect3" />
+
+    <Button
+        android:text="@string/Connection"
+        android:width="300dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnConnect3"
+        android:height="30dp"
+        android:textSize="14sp"
+        android:onClick="connectClick"
+        android:layout_below="@+id/btnStart3"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

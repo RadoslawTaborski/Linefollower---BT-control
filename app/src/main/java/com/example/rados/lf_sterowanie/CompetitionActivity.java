@@ -13,7 +13,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 public class CompetitionActivity extends AppCompatActivity implements ITaskDelegate{
-    public static MyBluetooth bluetooth;
+    public MyBluetooth bluetooth;
     TextView tvSpeed;
     TextView tvKP;
     TextView tvKD;
@@ -191,30 +191,22 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
     public void connectClick(View v) {
         if(bluetooth.isBtTurnedOn()) {
             if (bluetooth.isBtConnected()) {
-                try
-                {
+                try {
                     bluetooth.disconnect();
-                }
-                catch (IOException ex) {
+                }catch (IOException ex) {
                     ex.printStackTrace();
                 }
             } else {
-                try
-                {
+                try {
                     bluetooth.connect(this);
-                    //while(!bluetooth.isBtConnected());
-                    //afterConnecting();
-                }
-                catch (IOException ex) {
+                }catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
-        }else{
-            try
-            {
+        }else {
+            try {
                 bluetooth.turnOnBT();
-            }
-            catch (Exception ex) {
+            }catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -240,27 +232,30 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
     }
 
     private void afterConnecting(){
-        boolean flag=false;
-        while(!flag) {
-            if (bluetooth.isBtTurnedOn()) {
-                if (bluetooth.isBtConnected()) {
-                    try {
-                        Thread.sleep(100);
-                        bluetooth.sendData("?");
-                        flag=true;
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                        msg("Error");
-                    }catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+        if (bluetooth.isBtConnected()) {
+            try {
+                bluetooth.clean();
+                bluetooth.sendData("?");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                msg("Error");
             }
         }
     }
 
     @Override
     public void TaskCompletionResult(String msg){
-        afterConnecting();
+        boolean flag=false;
+        while(!flag) {
+            if (bluetooth.isBtTurnedOn()) {
+                try{
+                    Thread.sleep(100);
+                    afterConnecting();
+                    flag=true;
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
