@@ -14,9 +14,14 @@ import java.io.IOException;
 
 
 //TODO: Dodanie kalibracji (sprawdzenie czy nie jest w eeprom)
-public class TestActivity extends AppCompatActivity implements ITaskDelegate {
+public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth {
     public MyBluetooth bluetooth;
     public boolean auto=false;
+    private long timeWhenStopped=0;
+    private final String[] turnArray={"f","g","h","j","k","l"};
+    private final String[] speedArray={"\\","r","t","y","u","i","o","p","[","]"};
+    MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData=null;
+    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus=null;
     TextView textRight;
     TextView textLeft;
     TextView textSpeed;
@@ -41,9 +46,6 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
     SeekBar sbSpeed;
     SeekBar sbTurn;
     chronometer.Chronometer chrono;
-    private long timeWhenStopped=0;
-    private final String[] turnArray={"f","g","h","j","k","l"};
-    private final String[] speedArray={"\\","r","t","y","u","i","o","p","[","]"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +145,7 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
         chrono.setText("00:00:0");
         info.setText("Sterowanie manualne");
 
-        MyBluetooth.IUpdateUiAfterReceivingData update=new MyBluetooth.IUpdateUiAfterReceivingData() {
+        afterReceivingData=new MyBluetooth.IUpdateUiAfterReceivingData() {
             @Override
             public void updateUI(String data) {
                 if(data.length()==16){
@@ -154,11 +156,7 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
             }
         };
 
-        bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
-        if(bluetooth.isBtConnected())
-            afterConnecting();
-
-        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
+        afterChangingStatus=new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
             @Override
             public void updateUI() {
                 if (bluetooth.isBtTurnedOn()) {
@@ -187,7 +185,10 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
                     setLedsButtons(false,false,false);
                 }
             }
-        });
+        };
+
+        bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",afterReceivingData, afterChangingStatus);
+        ifConnected();
     }
 
     public void changedClick(View v){
@@ -528,6 +529,19 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
         btnLed12.setEnabled(led12);
     }
 
+    private void ifConnected(){
+        if (bluetooth.isBtConnected()) {
+            try {
+                bluetooth.clean();
+                bluetooth.sendData(speedArray[sbSpeed.getProgress()]);
+                bluetooth.sendData(turnArray[sbTurn.getProgress()]);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                msg("Error");
+            }
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if(bluetooth.isBtConnected()) {
@@ -542,19 +556,6 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
         return;
     }
 
-    private void afterConnecting(){
-        if (bluetooth.isBtConnected()) {
-            try {
-                bluetooth.clean();
-                bluetooth.sendData(speedArray[sbSpeed.getProgress()]);
-                bluetooth.sendData(turnArray[sbTurn.getProgress()]);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                msg("Error");
-            }
-        }
-    }
-
     @Override
     public void TaskCompletionResult(String msg){
         boolean flag=false;
@@ -562,7 +563,7 @@ public class TestActivity extends AppCompatActivity implements ITaskDelegate {
             if (bluetooth.isBtTurnedOn()) {
                 try{
                     Thread.sleep(100);
-                    afterConnecting();
+                    ifConnected();
                     flag=true;
                 }catch (InterruptedException e) {
                     e.printStackTrace();

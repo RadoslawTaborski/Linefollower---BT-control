@@ -17,8 +17,10 @@ import android.hardware.SensorEventListener;
 
 import java.io.IOException;
 
-public class MotionControlActivity extends AppCompatActivity implements ITaskDelegate, SensorEventListener{
+public class MotionControlActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth, SensorEventListener{
     private MyBluetooth bluetooth;
+    MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData=null;
+    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus=null;
     Button btnStart;
     Button btnConnect;
     ToggleButton btnR;
@@ -108,16 +110,7 @@ public class MotionControlActivity extends AppCompatActivity implements ITaskDel
         float x = (sbSpeed.getThumb().getBounds().centerX()+sbSpeed.getX());
         tvSpeed.setX(x);
 
-        MyBluetooth.IUpdateUiAfterReceivingData update=new MyBluetooth.IUpdateUiAfterReceivingData() {
-            @Override
-            public void updateUI(String data) {
-            }
-        };
-        bluetooth=new MyBluetooth(MotionControlActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
-        if(bluetooth.isBtConnected())
-            afterConnecting();
-
-        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
+        afterChangingStatus=new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
             @Override
             public void updateUI() {
                 if (bluetooth.isBtTurnedOn()) {
@@ -140,7 +133,11 @@ public class MotionControlActivity extends AppCompatActivity implements ITaskDel
                     sbSpeed.setEnabled(false);
                 }
             }
-        });
+        };
+
+        bluetooth=new MyBluetooth(MotionControlActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",null,afterChangingStatus);
+        if(bluetooth.isBtConnected())
+            whenConnected();
     }
 
     public void connectClick(View v) {
@@ -172,9 +169,11 @@ public class MotionControlActivity extends AppCompatActivity implements ITaskDel
             lastDirection=send("0");
             btnStart.setText("START");
             started=false;
+            btnConnect.setEnabled(true);
         } else {
             btnStart.setText("STOP");
             started=true;
+            btnConnect.setEnabled(false);
         }
     }
 
@@ -270,7 +269,7 @@ public class MotionControlActivity extends AppCompatActivity implements ITaskDel
         decorView.setSystemUiVisibility(uiOptions);
     }
 
-    private void afterConnecting(){
+    private void whenConnected(){
         send(speedArray[sbSpeed.getProgress()]);
     }
 
@@ -281,7 +280,7 @@ public class MotionControlActivity extends AppCompatActivity implements ITaskDel
             if (bluetooth.isBtTurnedOn()) {
                 try{
                     Thread.sleep(100);
-                    afterConnecting();
+                    whenConnected();
                     flag=true;
                 }catch (InterruptedException e) {
                     e.printStackTrace();

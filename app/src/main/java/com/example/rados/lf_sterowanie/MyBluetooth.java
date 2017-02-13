@@ -36,25 +36,27 @@ public class MyBluetooth {
     private IUpdateUiAfterReceivingData iUpdateReceiveUI;
     private IUpdateAfterChangingBluetoothStatus iUpdateAfterChangingStatus;
 
-    public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update) {
+    public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update, IUpdateAfterChangingBluetoothStatus update2) {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        setActivityAndContext(act,con,update);
         setAddress(add);
+        setActivityAndContext(act,con,update,update2);
     }
 
-    public MyBluetooth(Activity act, Context con, String add) {
+   /* public MyBluetooth(Activity act, Context con, String add) {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+        setAddress(add);
         setActivityAndContext(act,con,null);
-        setAddress(add);
-    }
+    }*/
 
-    public void setActivityAndContext(Activity act, Context con, IUpdateUiAfterReceivingData update){
+    public void setActivityAndContext(Activity act, Context con, IUpdateUiAfterReceivingData update, IUpdateAfterChangingBluetoothStatus update2){
         activity=act;
         context=con;
         setMethodToUpdateUiAfterReceivingData(update);
+        setMethodToUpdateUiAfterChangingBluetoothStatus(update2);
         if(isBtConnected()){
             beginListenForData();
         }
+        updateUiAfterChangingBluetoothStatus();
     }
 
     public void setActivityAndContext(Activity act, Context con){
@@ -91,9 +93,21 @@ public class MyBluetooth {
         }
     }
 
-    public void updateUiAfterChangingBluetoothStatus(IUpdateAfterChangingBluetoothStatus update)
+    private void setMethodToUpdateUiAfterChangingBluetoothStatus(IUpdateAfterChangingBluetoothStatus update){
+        if(update==null){
+            iUpdateAfterChangingStatus=new IUpdateAfterChangingBluetoothStatus() {
+                @Override
+                public void updateUI() {
+                }
+            };
+        }else{
+            iUpdateAfterChangingStatus=update;
+        }
+    }
+
+    public void updateUiAfterChangingBluetoothStatus()
     {
-        Runnable runner = new BluetoothStatusUpdater(update);
+        Runnable runner = new BluetoothStatusUpdater(iUpdateAfterChangingStatus);
         Thread thread=new Thread(runner);
         thread.start();
     }
@@ -195,7 +209,7 @@ public class MyBluetooth {
     }
 
 
-    public void connect(ITaskDelegate delegate) throws IOException{
+    public void connect(IMyBluetooth delegate) throws IOException{
         new ConnectBluetooth(delegate).execute();
     }
 
@@ -215,9 +229,9 @@ public class MyBluetooth {
     private class ConnectBluetooth extends AsyncTask<Void, Void, Void>  // UI thread
     {
         private boolean connectSuccess = true; //if it's here, it's almost connected
-        private ITaskDelegate delegate;
+        private IMyBluetooth delegate;
 
-        public ConnectBluetooth(ITaskDelegate _delegate){
+        public ConnectBluetooth(IMyBluetooth _delegate){
             delegate=_delegate;
         }
 
@@ -263,7 +277,7 @@ public class MyBluetooth {
             else
             {
                 btConnected = true;
-                //delegate.TaskCompletionResult("");
+                delegate.TaskCompletionResult(""); //TODO: edycja gui w ten sposób
             }
             progress.dismiss();
         }
@@ -274,7 +288,6 @@ public class MyBluetooth {
     private class BluetoothStatusUpdater implements Runnable {
         private IntentFilter filter;
         private boolean first=true;
-        private boolean first2=isBtConnected();
         private boolean[] lastState={isBtTurnedOn(),isBtConnected()};
 
         private final BroadcastReceiver M_RECEIVER = new BroadcastReceiver() {
@@ -285,7 +298,7 @@ public class MyBluetooth {
                 if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && !btConnected) {
                     btConnected =true;
                     toastMsg("Connected");
-                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) {
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) { //TODO: tutaj sie wywala activity
                     try
                     {
                         disconnect();
@@ -369,4 +382,8 @@ public class MyBluetooth {
     }
 
     /**********************************************************************************************/
+
+    public interface IMyBluetooth{
+        void TaskCompletionResult(String result);
+    }
 }

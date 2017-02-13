@@ -12,8 +12,10 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-public class CompetitionActivity extends AppCompatActivity implements ITaskDelegate{
+public class CompetitionActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth{
     public MyBluetooth bluetooth;
+    MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData=null;
+    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus=null;
     TextView tvSpeed;
     TextView tvKP;
     TextView tvKD;
@@ -46,7 +48,7 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
         editText=(EditText)findViewById(R.id.editText);
 
 
-        MyBluetooth.IUpdateUiAfterReceivingData update=new MyBluetooth.IUpdateUiAfterReceivingData() {
+        afterReceivingData =new MyBluetooth.IUpdateUiAfterReceivingData() {
             @Override
             public void updateUI(String data) {
                 if(data.length()==16){
@@ -60,11 +62,7 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
             }
         };
 
-        bluetooth=new MyBluetooth(CompetitionActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",update);
-        if(bluetooth.isBtConnected())
-            afterConnecting();
-
-        bluetooth.updateUiAfterChangingBluetoothStatus(new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
+        afterChangingStatus=new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
             @Override
             public void updateUI() {
                 if (bluetooth.isBtTurnedOn()) {
@@ -95,7 +93,11 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
                     btnConnect.setEnabled(true);
                 }
             }
-        });
+        };
+
+        bluetooth=new MyBluetooth(CompetitionActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",afterReceivingData,afterChangingStatus);
+        if(bluetooth.isBtConnected())
+            whenConnected();
 
     }
 
@@ -231,7 +233,7 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
         return;
     }
 
-    private void afterConnecting(){
+    private void whenConnected(){
         if (bluetooth.isBtConnected()) {
             try {
                 bluetooth.clean();
@@ -250,7 +252,7 @@ public class CompetitionActivity extends AppCompatActivity implements ITaskDeleg
             if (bluetooth.isBtTurnedOn()) {
                 try{
                     Thread.sleep(100);
-                    afterConnecting();
+                    whenConnected();
                     flag=true;
                 }catch (InterruptedException e) {
                     e.printStackTrace();
