@@ -18,8 +18,8 @@
         android:layout_height="wrap_content"
         android:onClick="testClick"
         android:elevation="1dp"
-        android:width="200dp"
-        android:height="120dp"
+        android:width="230dp"
+        android:height="180dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -31,8 +31,8 @@
         android:layout_height="wrap_content"
         android:onClick="competitionClick"
         android:elevation="1dp"
-        android:width="200dp"
-        android:height="120dp"
+        android:width="230dp"
+        android:height="180dp"
         android:layout_below="@+id/btnTest"
         android:layout_alignStart="@+id/btnTest" />
 
@@ -44,8 +44,8 @@
         android:layout_alignStart="@+id/btnCompetition"
         android:textSize="15sp"
         android:elevation="1dp"
-        android:width="200dp"
-        android:height="120dp"
+        android:width="230dp"
+        android:height="180dp"
         android:id="@+id/btnMotionControl"
         android:onClick="motionControlClick"
         android:layout_alignEnd="@+id/btnCompetition" />

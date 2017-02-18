@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -18,6 +19,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     public MyBluetooth bluetooth;
     public boolean auto=false;
     private long timeWhenStopped=0;
+    private static final String TAG = "MyBluetooth";
     private final String[] turnArray={"f","g","h","j","k","l"};
     private final String[] speedArray={"\\","r","t","y","u","i","o","p","[","]"};
     MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData=null;
@@ -52,6 +54,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        Log.i(TAG,"start");
 
         textRight=(TextView)findViewById(R.id.textRight);
         textLeft=(TextView)findViewById(R.id.textLeft);
@@ -148,10 +152,13 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         afterReceivingData=new MyBluetooth.IUpdateUiAfterReceivingData() {
             @Override
             public void updateUI(String data) {
-                if(data.length()==16){
-                    textLeft.setText(Integer.parseInt(data.substring(0,5)));
-                    textRight.setText(Integer.parseInt(data.substring(5,10)));
-                    textSpeed.setText(Integer.parseInt(data.substring(10,15)));
+                 if(data.length()==15){
+                    int tmp=Integer.parseInt(data.substring(0,5));
+                    textLeft.setText(String.valueOf(tmp));
+                    tmp=Integer.parseInt(data.substring(5,10));
+                    textRight.setText(String.valueOf(tmp));
+                    tmp=Integer.parseInt(data.substring(10,15));
+                    textSpeed.setText(String.valueOf(tmp));
                 }
             }
         };
@@ -176,6 +183,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                         setDirectionalButtons(false,false,false,false,false,false);
                         setOtherButtons(false,false,false,false,true);
                         setLedsButtons(false,false,false);
+                        chrono.stop();
                     }
                 } else {
                     btnConnect.setText("TURN ON BLUETOOTH");
@@ -188,6 +196,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         };
 
         bluetooth=new MyBluetooth(TestActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",afterReceivingData, afterChangingStatus);
+        bluetooth.updateUiAfterChangingBluetoothStatus();
         ifConnected();
     }
 
@@ -256,6 +265,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             try {
                 if (cbAuto.isChecked()) {
                     bluetooth.sendData(",");
+                    Thread.sleep(100);
                     bluetooth.sendData("?");
                     setOtherButtons(true,true,true,false,true);
                 } else {
@@ -266,6 +276,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -290,6 +302,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             try {
                 if (cbAuto.isChecked()) {
                     bluetooth.sendData("+");
+                    Thread.sleep(100);
                     bluetooth.sendData("?");
                     setOtherButtons(true,true,true,false,true);
                 } else {
@@ -300,6 +313,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -308,6 +323,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             try {
                 if (cbAuto.isChecked()) {
                     bluetooth.sendData("-");
+                    Thread.sleep(100);
                     bluetooth.sendData("?");
                     setOtherButtons(true,true,true,false,true);
                 } else {
@@ -318,6 +334,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -369,7 +387,6 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                     setOthers(false,true);
                     setDirectionalButtons(true,true,true,true,true,true);
                     setOtherButtons(false,true,true,true,false);
-                   // bluetooth.sendData("7");
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -532,7 +549,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     private void ifConnected(){
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.clean();
+                bluetooth.startReceiving();
                 bluetooth.sendData(speedArray[sbSpeed.getProgress()]);
                 bluetooth.sendData(turnArray[sbTurn.getProgress()]);
             } catch (IOException ex) {
@@ -543,7 +560,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     }
 
     @Override
-    public void onBackPressed() {
+    protected void onDestroy() {
+        Log.i(TAG,"onDestroy()");
         if(bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData("0");
@@ -552,8 +570,10 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 msg("Error");
             }
         }
-        finish();
-        return;
+        bluetooth.stoppedChangingStatus();
+        bluetooth.stoppedReceivingData();
+        super.onDestroy();
+
     }
 
     @Override

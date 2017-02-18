@@ -19,8 +19,8 @@ import java.io.IOException;
 
 public class MotionControlActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth, SensorEventListener{
     private MyBluetooth bluetooth;
-    MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData=null;
     MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus=null;
+    private static final String TAG = "MyBluetooth";
     Button btnStart;
     Button btnConnect;
     ToggleButton btnR;
@@ -136,8 +136,8 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         };
 
         bluetooth=new MyBluetooth(MotionControlActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",null,afterChangingStatus);
-        if(bluetooth.isBtConnected())
-            whenConnected();
+        bluetooth.updateUiAfterChangingBluetoothStatus();
+        ifConnected();
     }
 
     public void connectClick(View v) {
@@ -243,7 +243,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         String result="";
         if(bluetooth.isBtConnected()) {
             try {
-                bluetooth.clean();
                 bluetooth.sendData(msg);
                 result=msg;
             } catch (IOException ex) {
@@ -255,10 +254,11 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
     }
 
     @Override
-    public void onBackPressed() {
+    protected void onDestroy() {
         send("0");
-        finish();
-        return;
+        bluetooth.stoppedChangingStatus();
+        bluetooth.stoppedReceivingData();
+        super.onDestroy();
     }
 
     @Override
@@ -269,7 +269,8 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         decorView.setSystemUiVisibility(uiOptions);
     }
 
-    private void whenConnected(){
+    private void ifConnected(){
+        bluetooth.startReceiving();
         send(speedArray[sbSpeed.getProgress()]);
     }
 
@@ -280,7 +281,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
             if (bluetooth.isBtTurnedOn()) {
                 try{
                     Thread.sleep(100);
-                    whenConnected();
+                    ifConnected();
                     flag=true;
                 }catch (InterruptedException e) {
                     e.printStackTrace();

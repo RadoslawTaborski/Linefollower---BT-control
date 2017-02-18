@@ -5,5 +5,5 @@ package com.example.rados.lf_sterowanie;
  */
 
 public interface ITaskDelegate {
-    void TaskCompletionResult(String result);
+    void TaskCompletionResult(String result, String data);
 }

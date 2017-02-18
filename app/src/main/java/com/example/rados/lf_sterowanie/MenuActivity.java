@@ -14,13 +14,7 @@ public class MenuActivity extends AppCompatActivity {
 
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        if(MyBluetooth.isEmpty()){
-            bluetooth=new MyBluetooth(MenuActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",null,null);
-        }else {
-            bluetooth.setActivityAndContext(MenuActivity.this,getApplicationContext());
-        }
-
-        bluetooth.updateUiAfterChangingBluetoothStatus();
+        bluetooth=new MyBluetooth(MenuActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",null,null);
     }
 
     public void testClick(View view) {

@@ -4,9 +4,10 @@ import android.content.pm.ActivityInfo;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 public class CompetitionActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth{
     public MyBluetooth bluetooth;
+    private static final String TAG = "MyBluetooth";
     MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData=null;
     MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus=null;
     TextView tvSpeed;
@@ -26,7 +28,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     Button btnRead2;
     Button btnConnect;
     chronometer.Chronometer chrono;
-    EditText editText;
+    TextView tvSensorsData;
     private long timeWhenStopped=0;
 
     @Override
@@ -45,19 +47,25 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         btnRead2=(Button)findViewById(R.id.btnRead2);
         btnConnect=(Button)findViewById(R.id.btnConnect2);
         chrono=(chronometer.Chronometer)findViewById(R.id.chronometer2);
-        editText=(EditText)findViewById(R.id.editText);
+        tvSensorsData =(TextView)findViewById(R.id.tvData);
+        tvSensorsData.setMovementMethod(new ScrollingMovementMethod());
 
 
         afterReceivingData =new MyBluetooth.IUpdateUiAfterReceivingData() {
             @Override
             public void updateUI(String data) {
-                if(data.length()==16){
-                    tvKP.setText(Integer.parseInt(data.substring(0,5)));
-                    tvKD.setText(Integer.parseInt(data.substring(5,10)));
-                    tvKP.setText(Integer.parseInt(data.substring(10,15)));
+                if(data.length()==15){
+                    Log.i(TAG,"odebrano "+data);
+                    int tmp=Integer.parseInt(data.substring(0,5));
+                    tvKP.setText(String.valueOf(tmp));
+                    tmp=Integer.parseInt(data.substring(5,10));
+                    tvKD.setText(String.valueOf(tmp));
+                    tmp=Integer.parseInt(data.substring(10,15));
+                    tvSpeed.setText(String.valueOf(tmp));
                 }else {
-                    if(data.charAt(data.length())=='\r')
-                        editText.setText(data);
+                    if(data.charAt(data.length()-1)=='\r')
+                        Log.i(TAG,"odebrano "+data);
+                        tvSensorsData.setText(tvSensorsData.getText() +"\n" + data );
                 }
             }
         };
@@ -82,6 +90,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                         btnRead.setEnabled(false);
                         btnRead2.setEnabled(false);
                         btnConnect.setEnabled(true);
+                        chrono.stop();
                     }
                 } else {
                     btnConnect.setText("TURN ON BLUETOOTH");
@@ -96,8 +105,8 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         };
 
         bluetooth=new MyBluetooth(CompetitionActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",afterReceivingData,afterChangingStatus);
-        if(bluetooth.isBtConnected())
-            whenConnected();
+        bluetooth.updateUiAfterChangingBluetoothStatus();
+        ifConnected();
 
     }
 
@@ -113,6 +122,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 btnRead.setEnabled(true);
                 btnRead2.setEnabled(false);
                 btnConnect.setEnabled(false);
+                tvSensorsData.setText("");
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
@@ -219,8 +229,25 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
     }
 
+
+
+    private void ifConnected(){
+        if (bluetooth.isBtConnected()) {
+            try {
+                bluetooth.startReceiving();
+                Thread.sleep(50);
+                bluetooth.sendData("?");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                msg("Error");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
-    public void onBackPressed() {
+    protected void onDestroy() {
         if(bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData("0");
@@ -229,20 +256,9 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 msg("Error");
             }
         }
-        finish();
-        return;
-    }
-
-    private void whenConnected(){
-        if (bluetooth.isBtConnected()) {
-            try {
-                bluetooth.clean();
-                bluetooth.sendData("?");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                msg("Error");
-            }
-        }
+        bluetooth.stoppedChangingStatus();
+        bluetooth.stoppedReceivingData();
+        super.onDestroy();
     }
 
     @Override
@@ -252,7 +268,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
             if (bluetooth.isBtTurnedOn()) {
                 try{
                     Thread.sleep(100);
-                    whenConnected();
+                    ifConnected();
                     flag=true;
                 }catch (InterruptedException e) {
                     e.printStackTrace();

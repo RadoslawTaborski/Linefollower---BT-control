@@ -124,20 +124,6 @@
         android:layout_below="@+id/tvKP2"
         android:layout_alignParentStart="true" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text=""
-        android:enabled="false"
-        android:ems="10"
-        android:layout_below="@+id/btnRead2"
-        android:id="@+id/editText"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/btnConnect2"
-        tools:textSize="8sp" />
-
     <Button
         android:text="@string/CLEAR"
         android:width="120dp"
@@ -171,5 +157,20 @@
         android:width="200dp"
         android:layout_below="@+id/btnStart2"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnRead"
+        android:layout_alignParentStart="true"
+        android:id="@+id/tvData"
+        android:layout_above="@+id/btnConnect2"
+        android:layout_alignParentEnd="true"
+        android:gravity="bottom|center_horizontal"
+        android:scrollbars = "vertical"
+
+        android:lineSpacingMultiplier="0.5"
+        android:textSize="12sp" />
 
 </RelativeLayout>
