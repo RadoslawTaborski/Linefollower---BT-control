@@ -21,7 +21,7 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="@string/KP"
+        android:text="@string/Kp2"
         android:width="100dp"
         android:height="30dp"
         android:gravity="center"
@@ -32,7 +32,7 @@
         android:id="@+id/textView2" />
 
     <TextView
-        android:text="@string/SPEED"
+        android:text="@string/Speed1"
         android:width="100dp"
         android:height="30dp"
         android:gravity="center"
@@ -43,7 +43,7 @@
         android:id="@+id/textView3" />
 
     <TextView
-        android:text="@string/KD"
+        android:text="@string/Kd2"
         android:width="100dp"
         android:height="30dp"
         android:gravity="center"
@@ -54,7 +54,6 @@
         android:id="@+id/textView4" />
 
     <TextView
-        android:text="0"
         android:width="100dp"
         android:height="30dp"
         android:textSize="18sp"
@@ -66,7 +65,6 @@
         android:layout_alignStart="@+id/textView3" />
 
     <TextView
-        android:text="0"
         android:width="100dp"
         android:height="30dp"
         android:textSize="18sp"
@@ -78,7 +76,6 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="0"
         android:width="100dp"
         android:height="30dp"
         android:textSize="18sp"
@@ -90,7 +87,7 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="@string/Connection"
+        android:text="@string/Connect"
         android:width="300dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -102,10 +99,10 @@
         android:textSize="14sp"/>
 
     <Button
-        android:text="@string/READ2"
+        android:text="@string/Eeprom2"
         android:width="120dp"
         android:height="60dp"
-        android:onClick="read2Click"
+        android:onClick="eepromClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnRead2"
@@ -114,7 +111,7 @@
         android:layout_alignParentEnd="true" />
 
     <Button
-        android:text="@string/READ"
+        android:text="@string/Read2"
         android:width="120dp"
         android:height="60dp"
         android:onClick="readClick"
@@ -125,7 +122,7 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="@string/CLEAR"
+        android:text="@string/Clear1"
         android:width="120dp"
         android:height="60dp"
         android:onClick="clearClick"
@@ -137,7 +134,7 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="@string/Start"
+        android:text="@string/Start1"
         android:height="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -148,7 +145,7 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="@string/Stop"
+        android:text="@string/Stop1"
         android:height="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

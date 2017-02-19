@@ -3,6 +3,7 @@ package com.example.rados.lf_sterowanie;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -17,29 +18,25 @@ import android.hardware.SensorEventListener;
 
 import java.io.IOException;
 
-public class MotionControlActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth, SensorEventListener{
+public class MotionControlActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth, SensorEventListener {
     private MyBluetooth bluetooth;
-    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus=null;
+    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus = null;
     private static final String TAG = "MyBluetooth";
     Button btnStart;
     Button btnConnect;
     ToggleButton btnR;
     TextView tvSpeed;
     SeekBar sbSpeed;
-    private Sensor mySensor;
-    private SensorManager SM;
-
-    private boolean started=false;
-    private boolean checked=false;
-    private final String[] turnArray={"f","g","h","j","k","l"};
-    private final float[] yValue ={2.0f,3.33f,4.66f,6.0f,7.33f,8.66f,10.0f};
-    private final float zRange=6.0f;
-    private final String[] speedArray={"\\","r","t","y","u","i","o","p","[","]"};
+    private boolean started = false;
+    private boolean checked = false;
+    private final String[] turnArray = {"f", "g", "h", "j", "k", "l"};
+    private final float[] yValue = {2.0f, 3.33f, 4.66f, 6.0f, 7.33f, 8.66f, 10.0f};
+    private final String[] speedArray = {"\\", "r", "t", "y", "u", "i", "o", "p", "[", "]"};
     private TextView xText;
     private TextView yText;
     private TextView zText;
-    String last ="";
-    String lastDirection ="";
+    String last = "";
+    String lastDirection = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,37 +49,36 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        btnStart=(Button)findViewById(R.id.btnStart3);
-        btnR=(ToggleButton)findViewById(R.id.tbtnR);
+        btnStart = (Button) findViewById(R.id.btnStart3);
+        btnR = (ToggleButton) findViewById(R.id.tbtnR);
         btnR.setChecked(false);
         btnR.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    checked=true;
-                } else {
-                    checked=false;
-                }
+                checked = isChecked;
             }
         });
-        btnConnect=(Button)findViewById(R.id.btnConnect3);
-        sbSpeed=(SeekBar)findViewById(R.id.sbSpeed3);
-        tvSpeed=(TextView)findViewById(R.id.tvValue);
+        btnConnect = (Button) findViewById(R.id.btnConnect3);
+        sbSpeed = (SeekBar) findViewById(R.id.sbSpeed3);
+        tvSpeed = (TextView) findViewById(R.id.tvValue);
 
-        SM = (SensorManager)getSystemService(SENSOR_SERVICE);       // Accelerometer Sensor
+        Sensor mySensor;
+        SensorManager SM;
+        SM = (SensorManager) getSystemService(SENSOR_SERVICE);       // Accelerometer Sensor
         mySensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);        // Register sensor Listener
         SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
-        xText = (TextView)findViewById(R.id.xText);
-        yText = (TextView)findViewById(R.id.yText);
-        zText = (TextView)findViewById(R.id.zText);
+        xText = (TextView) findViewById(R.id.xText);
+        yText = (TextView) findViewById(R.id.yText);
+        zText = (TextView) findViewById(R.id.zText);
 
         sbSpeed.setMax(9);
         sbSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 progress = progresValue;
                 tvSpeed.setText(String.valueOf(progress));
-                float x = (sbSpeed.getThumb().getBounds().centerX()+sbSpeed.getX());
+                float x = (sbSpeed.getThumb().getBounds().centerX() + sbSpeed.getX());
                 tvSpeed.setX(x);
             }
 
@@ -93,9 +89,9 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 tvSpeed.setText(String.valueOf(progress));
-                float x = (sbSpeed.getThumb().getBounds().centerX()+sbSpeed.getX());
+                float x = (sbSpeed.getThumb().getBounds().centerX() + sbSpeed.getX());
                 tvSpeed.setX(x);
-                if(bluetooth.isBtConnected()) {
+                if (bluetooth.isBtConnected()) {
                     try {
                         bluetooth.sendData(speedArray[progress]);
                     } catch (IOException ex) {
@@ -107,27 +103,27 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         });
         sbSpeed.setProgress(3);
         tvSpeed.setText(String.valueOf(sbSpeed.getProgress()));
-        float x = (sbSpeed.getThumb().getBounds().centerX()+sbSpeed.getX());
+        float x = (sbSpeed.getThumb().getBounds().centerX() + sbSpeed.getX());
         tvSpeed.setX(x);
 
-        afterChangingStatus=new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
+        afterChangingStatus = new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
             @Override
             public void updateUI() {
                 if (bluetooth.isBtTurnedOn()) {
                     if (bluetooth.isBtConnected()) {
-                        btnConnect.setText("DISCONNECT");
+                        btnConnect.setText(R.string.Disconnect);
                         sbSpeed.setProgress(3);
                         btnStart.setEnabled(true);
                         btnR.setEnabled(true);
                         sbSpeed.setEnabled(true);
                     } else {
-                        btnConnect.setText("CONNECT");
+                        btnConnect.setText(R.string.Connect);
                         btnStart.setEnabled(false);
                         btnR.setEnabled(false);
                         sbSpeed.setEnabled(false);
                     }
                 } else {
-                    btnConnect.setText("TURN ON BLUETOOTH");
+                    btnConnect.setText(R.string.TurnOnBt);
                     btnStart.setEnabled(false);
                     btnR.setEnabled(false);
                     sbSpeed.setEnabled(false);
@@ -135,44 +131,46 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
             }
         };
 
-        bluetooth=new MyBluetooth(MotionControlActivity.this,getApplicationContext(),"00:12:6F:6B:C0:A2",null,afterChangingStatus);
+        bluetooth = new MyBluetooth(MotionControlActivity.this, getApplicationContext(), "00:12:6F:6B:C0:A2", null, afterChangingStatus);
         bluetooth.updateUiAfterChangingBluetoothStatus();
         ifConnected();
+
+        Log.i(TAG, "MotionControlActivityCreated");
     }
 
     public void connectClick(View v) {
-        if(bluetooth.isBtTurnedOn()) {
+        if (bluetooth.isBtTurnedOn()) {
             if (bluetooth.isBtConnected()) {
                 try {
                     bluetooth.disconnect();
-                }catch (IOException ex) {
+                } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             } else {
                 try {
                     bluetooth.connect(this);
-                }catch (IOException ex) {
+                } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
-        }else {
+        } else {
             try {
                 bluetooth.turnOnBT();
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    public void startClick(View v){
-        if(started){
-            lastDirection=send("0");
-            btnStart.setText("START");
-            started=false;
+    public void startClick(View v) {
+        if (started) {
+            lastDirection = send("0");
+            btnStart.setText(R.string.Start3);
+            started = false;
             btnConnect.setEnabled(true);
         } else {
-            btnStart.setText("STOP");
-            started=true;
+            btnStart.setText(R.string.Stop3);
+            started = true;
             btnConnect.setEnabled(false);
         }
     }
@@ -184,67 +182,70 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float x=event.values[0];
-        float y=event.values[1];
-        float z=event.values[2];
-        xText.setText("X: " + x);
-        yText.setText("Y: " + y);
-        zText.setText("Z: " + z);
+        final float zRange = 6.0f;
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
+        String tmp = R.string.X + String.valueOf(x);
+        xText.setText(tmp);
+        tmp = R.string.Y + String.valueOf(y);
+        yText.setText(tmp);
+        tmp = R.string.Z + String.valueOf(z);
+        zText.setText(tmp);
 
-        if(z > -zRange && z < zRange && started) {
+        if (z > -zRange && z < zRange && started) {
             if (!checked) {
-                for(int i=0; i<6;++i){
-                    if(y>=yValue[i] && y<yValue[i+1] && (last!=turnArray[i] || lastDirection!="e")){
-                        last=send(turnArray[i]);
-                        lastDirection=send("e");
+                for (int i = 0; i < 6; ++i) {
+                    if (y >= yValue[i] && y < yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("e"))) {
+                        last = send(turnArray[i]);
+                        lastDirection = send("e");
                         break;
                     }
                 }
-                for(int i=0; i<6;++i){
-                    if(y<=-yValue[i] && y>-yValue[i+1] && (last!=turnArray[i] || lastDirection!="q")){
-                        last=send(turnArray[i]);
-                        lastDirection=send("q");
+                for (int i = 0; i < 6; ++i) {
+                    if (y <= -yValue[i] && y > -yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("q"))) {
+                        last = send(turnArray[i]);
+                        lastDirection = send("q");
                         break;
                     }
                 }
-                 if(y>=-yValue[0] && y<= yValue[0] && lastDirection!="w"){
-                    lastDirection=send("w");
+                if (y >= -yValue[0] && y <= yValue[0] && !lastDirection.equals("w")) {
+                    lastDirection = send("w");
                 }
             } else {
-                for(int i=0; i<6;++i){
-                    if(y>=yValue[i] && y<yValue[i+1] && (last!=turnArray[i] || lastDirection!="a")){
-                        last=send(turnArray[i]);
-                        lastDirection=send("a");
+                for (int i = 0; i < 6; ++i) {
+                    if (y >= yValue[i] && y < yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("a"))) {
+                        last = send(turnArray[i]);
+                        lastDirection = send("a");
                         break;
                     }
                 }
-                for(int i=0; i<6;++i){
-                    if(y<=-yValue[i] && y>-yValue[i+1] && (last!=turnArray[i] || lastDirection!="d")){
-                        last=send(turnArray[i]);
-                        lastDirection=send("d");
+                for (int i = 0; i < 6; ++i) {
+                    if (y <= -yValue[i] && y > -yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("d"))) {
+                        last = send(turnArray[i]);
+                        lastDirection = send("d");
                         break;
                     }
                 }
-                if(y>=-yValue[0] && y<= yValue[0] && lastDirection!="s"){
-                    lastDirection=send("s");
+                if (y >= -yValue[0] && y <= yValue[0] && !lastDirection.equals("s")) {
+                    lastDirection = send("s");
                 }
             }
-        }else if(lastDirection!="0"){
-            lastDirection=send("0");
+        } else if (!lastDirection.equals("0")) {
+            lastDirection = send("0");
         }
     }
 
-    private void msg(String s)
-    {
-        Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
+    private void msg(String s) {
+        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
     }
 
-    public String send(String msg){
-        String result="";
-        if(bluetooth.isBtConnected()) {
+    public String send(String msg) {
+        String result = "";
+        if (bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData(msg);
-                result=msg;
+                result = msg;
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
@@ -269,21 +270,21 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         decorView.setSystemUiVisibility(uiOptions);
     }
 
-    private void ifConnected(){
+    private void ifConnected() {
         bluetooth.startReceiving();
         send(speedArray[sbSpeed.getProgress()]);
     }
 
     @Override
-    public void TaskCompletionResult(String msg){
-        boolean flag=false;
-        while(!flag) {
+    public void TaskCompletionResult(String msg) {
+        boolean flag = false;
+        while (!flag) {
             if (bluetooth.isBtTurnedOn()) {
-                try{
+                try {
                     Thread.sleep(100);
                     ifConnected();
-                    flag=true;
-                }catch (InterruptedException e) {
+                    flag = true;
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }

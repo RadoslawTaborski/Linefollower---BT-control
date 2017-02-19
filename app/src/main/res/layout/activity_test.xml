@@ -18,7 +18,6 @@
         android:layout_above="@+id/btnRight"
         android:layout_alignEnd="@+id/btnRight"
         android:layout_toEndOf="@+id/btnSpeedUp"
-        android:text="0"
         android:gravity="center"
         android:layout_below="@+id/tvTurn" />
 
@@ -27,7 +26,6 @@
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
         android:layout_alignStart="@+id/btnLeft"
         android:gravity="center"
         android:layout_toStartOf="@+id/btnSpeedUp"
@@ -48,7 +46,7 @@
         android:layout_toEndOf="@+id/btnSpeedUp" />
 
     <Button
-        android:text="@string/Stop"
+        android:text="@string/Stop1"
         android:width="75dp"
         android:height="100dp"
         android:layout_width="wrap_content"
@@ -60,7 +58,7 @@
         android:layout_marginBottom="37dp" />
 
     <Button
-        android:text="@string/Pauza"
+        android:text="@string/Pauza1"
         android:height="80dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,7 +69,7 @@
         android:layout_toStartOf="@+id/btnStop" />
 
     <Button
-        android:text="@string/Connection"
+        android:text="@string/Connect"
         android:width="300dp"
         android:height="30dp"
         android:layout_width="wrap_content"
@@ -98,7 +96,6 @@
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
         android:width="120dp"
         android:gravity="center"
         android:layout_above="@+id/btnSpeedUp"
@@ -160,7 +157,7 @@
         android:layout_marginTop="10dp" />
 
     <CheckBox
-        android:text="@string/Automatic"
+        android:text="@string/Automatic1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/cbAuto"
@@ -215,7 +212,7 @@
         android:layout_toStartOf="@+id/tvTurn" />
 
     <TextView
-        android:text="@string/CURVE"
+        android:text="@string/Turn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvTurn"
@@ -225,7 +222,7 @@
         android:layout_toEndOf="@+id/tvSpeed" />
 
     <TextView
-        android:text="@string/SPEED"
+        android:text="@string/Speed1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvSpeed"
@@ -248,7 +245,7 @@
         android:layout_toStartOf="@+id/btnSpeedDown" />
 
     <Button
-        android:text="@string/Start"
+        android:text="@string/Start1"
         android:width="75dp"
         android:height="100dp"
         android:layout_width="wrap_content"
@@ -259,7 +256,7 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="@string/Max"
+        android:text="@string/Max1"
         android:height="80dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

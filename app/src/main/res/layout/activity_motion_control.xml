@@ -11,7 +11,7 @@
     tools:context="com.example.rados.lf_sterowanie.MotionControlActivity">
 
     <TextView
-        android:text="@string/SPEED"
+        android:text="@string/Speed1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvSpeed3"
@@ -31,7 +31,7 @@
         android:progress="1" />
 
     <Button
-        android:text="@string/Start"
+        android:text="@string/Start1"
         android:height="150dp"
         android:width="300dp"
         android:textSize="20sp"
@@ -45,14 +45,13 @@
         android:layout_alignParentEnd="true" />
 
     <ToggleButton
-        android:text="R"
         android:height="100dp"
         android:width="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tbtnR"
-        android:textOff="R ON"
-        android:textOn="R OFF"
+        android:textOff="@string/ROn"
+        android:textOn="@string/ROff"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/btnStart3" />
@@ -66,7 +65,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="Z"
+        android:text="@string/Z"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/zText"
@@ -75,7 +74,7 @@
         android:layout_toEndOf="@+id/btnConnect3" />
 
     <TextView
-        android:text="Y"
+        android:text="@string/Y"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/yText"
@@ -85,7 +84,7 @@
         android:layout_toEndOf="@+id/btnConnect3" />
 
     <TextView
-        android:text="X"
+        android:text="@string/X"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/xText"
@@ -94,7 +93,7 @@
         android:layout_toEndOf="@+id/btnConnect3" />
 
     <Button
-        android:text="@string/Connection"
+        android:text="@string/Connect"
         android:width="300dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

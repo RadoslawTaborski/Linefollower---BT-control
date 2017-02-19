@@ -1,39 +1,55 @@
 <resources>
     <string name="app_name">LineFollower</string>
+
+    <string name="Connect">CONNECT</string>
+    <string name="Disconnect">DISCONNECT</string>
+    <string name="TurnOnBt">TURN ON BLUETOOTH</string>
+
+    <string name="Test">TEST</string>
+    <string name="Auto1">AUTOMATIC CONTROL</string>
+    <string name="Manual1">MANUAL CONTROL</string>
     <string name="LCurve">LEFT</string>
     <string name="RCurve">RIGHT</string>
     <string name="LCurveR">LEFT R</string>
     <string name="RCurveR">RIGHT R</string>
     <string name="Up">UP</string>
     <string name="Down">DOWN</string>
-    <string name="Test">TEST</string>
-    <string name="Start">START</string>
-    <string name="Stop">STOP</string>
-    <string name="Max">MAX</string>
-    <string name="Pauza">PAUSE</string>
-    <string name="Automatic">AUTO</string>
-    <string name="Connection">CONNECT</string>
-    <string name="Connection2">DISCONNECT</string>
+    <string name="Start1">START</string>
+    <string name="Stop1">STOP</string>
+    <string name="Max1">MAX</string>
+    <string name="Pauza1">PAUSE</string>
+    <string name="Automatic1">AUTO</string>
     <string name="LED1">LED1</string>
     <string name="LED12">LED12</string>
     <string name="LED2">LED2</string>
-    <string name="KP1">KP+</string>
-    <string name="KP2">KP-</string>
-    <string name="KD1">KD+</string>
-    <string name="KD2">KD-</string>
-    <string name="SPEED1">SPEED+</string>
-    <string name="SPEED2">SPEED-</string>
-    <string name="SPEED">SPEED</string>
-    <string name="CURVE">TURN</string>
-    <string name="SAVE">SAVE</string>
-    <string name="CLEAR">CLEAR</string>
-
-    <string name="KP">KP</string>
-    <string name="KD">KD</string>
-    <string name="READ">READ</string>
-    <string name="READ2">READ STOP</string>
+    <string name="Kp1">KP+</string>
+    <string name="Kd1">KD+</string>
+    <string name="Speed1a">SPEED+</string>
+    <string name="Speed1">SPEED =</string>
+    <string name="Turn1">TURN =</string>
+    <string name="Save1">SAVE</string>
+    <string name="Clear1">CLEAR</string>
 
     <string name="Competition">COMPETITION</string>
+    <string name="Kp2">KP</string>
+    <string name="Kd2">KD</string>
+    <string name="Speed2">SPEED</string>
+    <string name="Clear2">CLEAR</string>
+    <string name="Read2">READ</string>
+    <string name="ReadStop2">READ STOP</string>
+    <string name="Eeprom2">EEPROM</string>
+    <string name="Start2">START</string>
+    <string name="Stop2">STOP</string>
+
+    <string name="MotionControl">MOTION CONTROL</string>
+    <string name="Start3">START</string>
+    <string name="Stop3">STOP</string>
+    <string name="ROn">R ON</string>
+    <string name="ROff">R OFF</string>
+    <string name="Speed3">SPEED</string>
+    <string name="X">X: </string>
+    <string name="Y">Y: </string>
+    <string name="Z">Z: </string>
 
     <string name="title_activity_motion_control">MotionControlActivity</string>
     <string name="dummy_button">Dummy Button</string>

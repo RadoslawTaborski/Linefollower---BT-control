@@ -37,7 +37,7 @@
         android:layout_alignStart="@+id/btnTest" />
 
     <Button
-        android:text="Motion Control"
+        android:text="@string/MotionControl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnCompetition"
