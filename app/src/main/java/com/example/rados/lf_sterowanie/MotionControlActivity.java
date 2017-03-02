@@ -20,6 +20,8 @@ import java.io.IOException;
 
 public class MotionControlActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth, SensorEventListener {
     private MyBluetooth bluetooth;
+    private SensorManager SM;
+    Sensor mySensor;
     MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus = null;
     private static final String TAG = "MyBluetooth";
     Button btnStart;
@@ -32,9 +34,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
     private final String[] turnArray = {"f", "g", "h", "j", "k", "l"};
     private final float[] yValue = {2.0f, 3.33f, 4.66f, 6.0f, 7.33f, 8.66f, 10.0f};
     private final String[] speedArray = {"\\", "r", "t", "y", "u", "i", "o", "p", "[", "]"};
-    private TextView xText;
-    private TextView yText;
-    private TextView zText;
     String last = "";
     String lastDirection = "";
 
@@ -61,14 +60,8 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         sbSpeed = (SeekBar) findViewById(R.id.sbSpeed3);
         tvSpeed = (TextView) findViewById(R.id.tvValue);
 
-        Sensor mySensor;
-        SensorManager SM;
         SM = (SensorManager) getSystemService(SENSOR_SERVICE);       // Accelerometer Sensor
         mySensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);        // Register sensor Listener
-        SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
-        xText = (TextView) findViewById(R.id.xText);
-        yText = (TextView) findViewById(R.id.yText);
-        zText = (TextView) findViewById(R.id.zText);
 
         sbSpeed.setMax(9);
         sbSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -183,15 +176,8 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
     @Override
     public void onSensorChanged(SensorEvent event) {
         final float zRange = 6.0f;
-        float x = event.values[0];
         float y = event.values[1];
         float z = event.values[2];
-        String tmp = R.string.X + String.valueOf(x);
-        xText.setText(tmp);
-        tmp = R.string.Y + String.valueOf(y);
-        yText.setText(tmp);
-        tmp = R.string.Z + String.valueOf(z);
-        zText.setText(tmp);
 
         if (z > -zRange && z < zRange && started) {
             if (!checked) {
@@ -244,12 +230,16 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         String result = "";
         if (bluetooth.isBtConnected()) {
             try {
+                Log.i(TAG,"send przed wysłaniem");
                 bluetooth.sendData(msg);
                 result = msg;
-            } catch (IOException ex) {
+                Log.i(TAG,"send wysłano");
+            } catch (Exception ex) {
+                Log.i(TAG,"send"+ex.getMessage());
                 ex.printStackTrace();
                 msg("Error");
             }
+            Log.i(TAG,"send koniec");
         }
         return result;
     }
@@ -259,6 +249,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         send("0");
         bluetooth.stoppedChangingStatus();
         bluetooth.stoppedReceivingData();
+        SM.unregisterListener(this);
         super.onDestroy();
     }
 
@@ -268,26 +259,38 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         final int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         final View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(uiOptions);
+        Log.i(TAG,"onResume koniec");
     }
 
     private void ifConnected() {
-        bluetooth.startReceiving();
-        send(speedArray[sbSpeed.getProgress()]);
+        if (bluetooth.isBtConnected()) {
+            send(speedArray[sbSpeed.getProgress()]);
+            SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
+            Log.i(TAG,"ifConnected koniec");
+        }
     }
 
     @Override
-    public void TaskCompletionResult(String msg) {
-        boolean flag = false;
-        while (!flag) {
-            if (bluetooth.isBtTurnedOn()) {
-                try {
-                    Thread.sleep(100);
-                    ifConnected();
-                    flag = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+    public void StatusChanging(MyBluetooth.Status status) {
+        switch(status)
+        {
+            case CONNECTED:
+                boolean flag = false;
+                while (!flag) {
+                    if (bluetooth.isBtTurnedOn()) {
+                        try {
+                            Thread.sleep(100);
+                            ifConnected();
+                            flag = true;
+                            Log.i(TAG,"StatusChanging koniec");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }
+                break;
+            default:
+                break;
         }
     }
 }

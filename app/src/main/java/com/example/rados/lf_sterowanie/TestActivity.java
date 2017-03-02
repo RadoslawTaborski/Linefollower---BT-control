@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth {
     public MyBluetooth bluetooth;
@@ -72,7 +73,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         sbSpeed = (SeekBar) findViewById(R.id.sbSpeed);
         sbSpeed.setMax(9);
         sbSpeed.setProgress(3);
-        tvSpeed.setText(R.string.Speed1 + sbSpeed.getProgress());
+        tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(sbSpeed.getProgress())));
         sbSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
 
@@ -87,7 +88,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                tvSpeed.setText(R.string.Speed1 + progress);
+                tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(progress)));
                 if (bluetooth.isBtConnected()) {
                     try {
                         bluetooth.sendData(speedArray[progress]);
@@ -102,7 +103,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         sbTurn = (SeekBar) findViewById(R.id.sbTurn);
         sbTurn.setMax(5);
         sbTurn.setProgress(3);
-        tvTurn.setText(R.string.Turn1 + sbTurn.getProgress());
+        tvTurn.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Turn1), Integer.toString(sbTurn.getProgress())));
         sbTurn.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
 
@@ -117,7 +118,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                tvTurn.setText(R.string.Turn1 + progress);
+                tvTurn.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Turn1), Integer.toString(progress)));
                 if (bluetooth.isBtConnected()) {
                     try {
                         bluetooth.sendData(turnArray[progress]);
@@ -181,8 +182,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                         setLedsButtons(true, true, true);
                         sbTurn.setProgress(3);
                         sbSpeed.setProgress(3);
-                        tvTurn.setText(R.string.Turn1 + sbTurn.getProgress());
-                        tvSpeed.setText(R.string.Speed1 + sbSpeed.getProgress());
+                        tvTurn.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Turn1), Integer.toString(sbTurn.getProgress())));
+                        tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(sbSpeed.getProgress())));
                     } else {
                         btnConnect.setText(R.string.Connect);
                         setOthers(false, false);
@@ -428,7 +429,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 setOtherButtons(false, false, false, true, false);
             } else {
                 sbSpeed.setProgress(speedArray.length - 1);
-                tvSpeed.setText(R.string.Speed1 + (speedArray.length - 1));
+                tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(speedArray.length - 1)));
                 bluetooth.sendData(speedArray[speedArray.length - 1]);
             }
         } catch (IOException ex) {
@@ -580,18 +581,25 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     }
 
     @Override
-    public void TaskCompletionResult(String msg) {
-        boolean flag = false;
-        while (!flag) {
-            if (bluetooth.isBtTurnedOn()) {
-                try {
-                    Thread.sleep(100);
-                    ifConnected();
-                    flag = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+    public void StatusChanging(MyBluetooth.Status status) {
+        switch(status)
+        {
+            case CONNECTED:
+                boolean flag = false;
+                while (!flag) {
+                    if (bluetooth.isBtTurnedOn()) {
+                        try {
+                            Thread.sleep(100);
+                            ifConnected();
+                            flag = true;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }
+                break;
+            default:
+                break;
         }
     }
 }

@@ -25,7 +25,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     Button btnStop;
     Button btnClear;
     Button btnRead;
-    Button btnRead2;
+    Button btnEeprom;
     Button btnConnect;
     chronometer.Chronometer chrono;
     TextView tvSensorsData;
@@ -49,7 +49,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         btnStop = (Button) findViewById(R.id.btnStop2);
         btnClear = (Button) findViewById(R.id.btnClear2);
         btnRead = (Button) findViewById(R.id.btnRead);
-        btnRead2 = (Button) findViewById(R.id.btnRead2);
+        btnEeprom = (Button) findViewById(R.id.btnRead2);
         btnConnect = (Button) findViewById(R.id.btnConnect2);
         chrono = (chronometer.Chronometer) findViewById(R.id.chronometer2);
         tvSensorsData = (TextView) findViewById(R.id.tvData);
@@ -85,7 +85,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                         btnStop.setEnabled(false);
                         btnClear.setEnabled(true);
                         btnRead.setEnabled(false);
-                        btnRead2.setEnabled(false);
+                        btnEeprom.setEnabled(true);
                         btnConnect.setEnabled(true);
                     } else {
                         btnConnect.setText(R.string.Connect);
@@ -93,7 +93,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                         btnStop.setEnabled(false);
                         btnClear.setEnabled(false);
                         btnRead.setEnabled(false);
-                        btnRead2.setEnabled(false);
+                        btnEeprom.setEnabled(false);
                         btnConnect.setEnabled(true);
                         chrono.stop();
                     }
@@ -103,7 +103,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     btnStop.setEnabled(false);
                     btnClear.setEnabled(false);
                     btnRead.setEnabled(false);
-                    btnRead2.setEnabled(false);
+                    btnEeprom.setEnabled(false);
                     btnConnect.setEnabled(true);
                 }
             }
@@ -125,7 +125,8 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 btnStop.setEnabled(true);
                 btnClear.setEnabled(false);
                 btnRead.setEnabled(true);
-                btnRead2.setEnabled(false);
+                btnRead.setText(R.string.Read2);
+                btnEeprom.setEnabled(false);
                 btnConnect.setEnabled(false);
                 tvSensorsData.setText("");
             } catch (IOException ex) {
@@ -145,7 +146,8 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 btnStop.setEnabled(false);
                 btnClear.setEnabled(true);
                 btnRead.setEnabled(false);
-                btnRead2.setEnabled(false);
+                btnRead.setText(R.string.Read2);
+                btnEeprom.setEnabled(true);
                 btnConnect.setEnabled(true);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -162,7 +164,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 btnStop.setEnabled(true);
                 btnClear.setEnabled(false);
                 btnRead.setEnabled(false);
-                btnRead2.setEnabled(false);
+                btnEeprom.setEnabled(false);
                 btnConnect.setEnabled(false);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -179,7 +181,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     btnStart.setEnabled(false);
                     btnStop.setEnabled(true);
                     btnClear.setEnabled(false);
-                    btnRead.setText(R.string.Read2);
+                    btnRead.setText(R.string.ReadStop2);
                     btnConnect.setEnabled(false);
                     readON = true;
                 } catch (IOException ex) {
@@ -192,7 +194,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     btnStart.setEnabled(false);
                     btnStop.setEnabled(true);
                     btnClear.setEnabled(false);
-                    btnRead.setText(R.string.ReadStop2);
+                    btnRead.setText(R.string.Read2);
                     btnConnect.setEnabled(false);
                     readON = false;
                 } catch (IOException ex) {
@@ -279,18 +281,25 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     }
 
     @Override
-    public void TaskCompletionResult(String msg) {
-        boolean flag = false;
-        while (!flag) {
-            if (bluetooth.isBtTurnedOn()) {
-                try {
-                    Thread.sleep(100);
-                    ifConnected();
-                    flag = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+    public void StatusChanging(MyBluetooth.Status status) {
+        switch(status)
+        {
+            case CONNECTED:
+                boolean flag = false;
+                while (!flag) {
+                    if (bluetooth.isBtTurnedOn()) {
+                        try {
+                            Thread.sleep(100);
+                            ifConnected();
+                            flag = true;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }
+                break;
+            default:
+                break;
         }
     }
 }

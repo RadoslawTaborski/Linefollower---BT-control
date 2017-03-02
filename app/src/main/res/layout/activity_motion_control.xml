@@ -65,7 +65,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="@string/Z"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/zText"
@@ -74,7 +74,7 @@
         android:layout_toEndOf="@+id/btnConnect3" />
 
     <TextView
-        android:text="@string/Y"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/yText"
@@ -84,7 +84,7 @@
         android:layout_toEndOf="@+id/btnConnect3" />
 
     <TextView
-        android:text="@string/X"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/xText"

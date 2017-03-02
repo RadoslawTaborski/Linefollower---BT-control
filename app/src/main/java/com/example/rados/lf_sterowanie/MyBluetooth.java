@@ -36,8 +36,15 @@ public class MyBluetooth {
     private byte[] readBuffer;
     private int readBufferPosition;
     private ProgressDialog progress;
+    private IMyBluetooth delegate;
     private IUpdateUiAfterReceivingData iUpdateReceiveUI;
     private IUpdateAfterChangingBluetoothStatus iUpdateAfterChangingStatus;
+
+    public enum Status{
+        CONNECTED,
+        DISCONNECTED,
+        RECEIVED
+    }
 
     public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update, IUpdateAfterChangingBluetoothStatus update2) {
         Log.i(TAG, "MyBluetooth() start");
@@ -187,6 +194,7 @@ public class MyBluetooth {
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
                                     Log.i(TAG, "run() odebrano: "+data);
+                                    //delegate.StatusChanging(Status.RECEIVED);
                                     readBufferPosition = 0;
                                     Thread uiThread=new Thread(new Runnable() {
                                         public void run() {
@@ -209,11 +217,13 @@ public class MyBluetooth {
                         }
                     }
                     catch (IOException ex){
-                        Log.i(TAG,"run() catch " +ex.getMessage());
+                        Log.i(TAG,"run() catch IO" +ex.getMessage());
                         ex.printStackTrace();
                         stopWorker = true;
-                    }catch (Exception e){}
-
+                    }catch (Exception ex){
+                        Log.i(TAG,"run() catch " +ex.getMessage());
+                        ex.printStackTrace();
+                    }
                 }
                 Log.i(TAG,"run() koniec");
             }
@@ -251,14 +261,6 @@ public class MyBluetooth {
         Log.i(TAG, "connect() koniec");
     }
 
-    public void clean() throws IOException{
-        Log.i(TAG, "clean() start");
-        if(isBtTurnedOn() && isBtConnected()) {
-            btOutputStream.flush();
-        }
-        Log.i(TAG, "clean() koniec");
-    }
-
     private void toastMsg(String s)
     {
         Toast.makeText(context,s,Toast.LENGTH_LONG).show();
@@ -269,7 +271,6 @@ public class MyBluetooth {
     private class ConnectBluetooth extends AsyncTask<Void, Void, Void>  // UI thread
     {
         private boolean connectSuccess = true; //if it's here, it's almost connected
-        private IMyBluetooth delegate;
 
         public ConnectBluetooth(IMyBluetooth _delegate){
             Log.i(TAG, "ConnectBluetooth() start");
@@ -322,7 +323,6 @@ public class MyBluetooth {
                 Log.i(TAG, "onPostExecute() nie połączono");
                 toastMsg("Connection Failed");
                 btConnected=false;
-                btAdapter=null;
                 btSocket=null;
                 btOutputStream=null;
                 btInputStream=null;
@@ -331,7 +331,7 @@ public class MyBluetooth {
             {
                 Log.i(TAG, "onPostExecute() połączono");
                 btConnected = true;
-                delegate.TaskCompletionResult(""); //TODO: edycja gui w ten sposób
+                delegate.StatusChanging(MyBluetooth.Status.CONNECTED);
             }
             progress.dismiss();
             Log.i(TAG, "onPostExecute() koniec");
@@ -354,14 +354,17 @@ public class MyBluetooth {
                 if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && !btConnected) {
                     btConnected =true;
                     toastMsg("Connected");
-                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) { //TODO: tutaj sie wywala activity
+                    Log.i(TAG, "onReceive() connected");
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) {
                     try
                     {
                         disconnect();
                         toastMsg("Disconnected");
+                        Log.i(TAG, "onReceive() disconnected");
+                        //delegate.StatusChanging(MyBluetooth.Status.DISCONNECTED);
                     }
                     catch (IOException ex) {
-                        Log.i(TAG, "onReceive() catch " + ex.getMessage());
+                        Log.i(TAG, "onReceive() catch IO" + ex.getMessage());
                         toastMsg("Error");
                         ex.printStackTrace();
                     }
@@ -459,6 +462,6 @@ public class MyBluetooth {
     /**********************************************************************************************/
 
     public interface IMyBluetooth{
-        void TaskCompletionResult(String result);
+        void StatusChanging(MyBluetooth.Status status);
     }
 }
