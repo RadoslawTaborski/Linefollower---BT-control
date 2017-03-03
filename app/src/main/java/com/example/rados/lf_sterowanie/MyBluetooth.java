@@ -12,242 +12,173 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.UUID;
 
-public class MyBluetooth {
+class MyBluetooth {
     private static boolean btConnected = false;
-    private static boolean btTurnedOn =false;
-    private static boolean stopWorker = false;
-    private static BluetoothAdapter btAdapter=null;
+    private static boolean btTurnedOn = false;
+    private static BluetoothAdapter btAdapter = null;
     private static BluetoothSocket btSocket;
     private static OutputStream btOutputStream;
     private static InputStream btInputStream;
-    private final UUID DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String address;
-    private static final String TAG = "MyBluetooth";
+    private final UUID DEVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private final String TAG = "MyBluetooth";
 
-    private Thread recevingDataThread;
+    private static int counterThread =0;
+
+    private Thread receivingDataThread;
     private Thread changingStatusThread;
     private Activity activity;
     private Context context;
-    private byte[] readBuffer;
-    private int readBufferPosition;
     private ProgressDialog progress;
     private IMyBluetooth delegate;
-    private IUpdateUiAfterReceivingData iUpdateReceiveUI;
-    private IUpdateAfterChangingBluetoothStatus iUpdateAfterChangingStatus;
 
-    public enum Status{
-        CONNECTED,
-        DISCONNECTED,
-        RECEIVED
-    }
-
-    public MyBluetooth(Activity act, Context con, String add, IUpdateUiAfterReceivingData update, IUpdateAfterChangingBluetoothStatus update2) {
+    MyBluetooth(IMyBluetooth iMyBluetooth, String add) {
         Log.i(TAG, "MyBluetooth() start");
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (btAdapter == null) {
+            btAdapter = BluetoothAdapter.getDefaultAdapter();
+        }
         setAddress(add);
-        setActivityAndContext(act,con,update,update2);
+        setActivityAndContext(iMyBluetooth);
+        delegate = iMyBluetooth;
         Log.i(TAG, "MyBluetooth() koniec");
     }
 
-    public void startReceiving(){
+    void startReceiving(final byte delimiter) {
         Log.i(TAG, "startReceiving() start");
-        if(isBtConnected()){
+        if (isBtConnected()) {
             Log.i(TAG, "startReceiving() gdy połączone");
-            beginListenForData();
+            beginListenForData(delimiter);
         }
         Log.i(TAG, "startReceiving() koniec");
     }
 
-    private void setActivityAndContext(Activity act, Context con, IUpdateUiAfterReceivingData update, IUpdateAfterChangingBluetoothStatus update2){
+    private void setActivityAndContext(IMyBluetooth iMyBluetooth) {
         Log.i(TAG, "setActivityAndContext() start");
-        activity=act;
-        context=con;
-        setMethodToUpdateUiAfterReceivingData(update);
-        setMethodToUpdateUiAfterChangingBluetoothStatus(update2);
+        activity = (Activity) iMyBluetooth;
+        context = ((Context) iMyBluetooth).getApplicationContext();
         Log.i(TAG, "setActivityAndContext() koniec");
     }
 
-    public boolean isBtConnected(){
+    boolean isBtConnected() {
         return btConnected;
     }
 
-    public boolean isBtTurnedOn(){
+    boolean isBtTurnedOn() {
         return btTurnedOn;
     }
 
-    public static boolean isEmpty(){
-        if(btAdapter==null) {
-            return true;
-        } else{
-            return false;
-        }
-    }
-
-    private void setMethodToUpdateUiAfterReceivingData(IUpdateUiAfterReceivingData update){
-        Log.i(TAG, "setMethodToUpdateUiAfterReceivingData() start");
-        if(update==null){
-            Log.i(TAG, "setMethodToUpdateUiAfterReceivingData() gdy null");
-            iUpdateReceiveUI=new IUpdateUiAfterReceivingData() {
-                @Override
-                public void updateUI(String data) {
-                }
-            };
-        }else{
-            Log.i(TAG, "setMethodToUpdateUiAfterReceivingData() gdy nie null");
-            iUpdateReceiveUI=update;
-        }
-        Log.i(TAG, "setMethodToUpdateUiAfterReceivingData() koniec");
-    }
-
-    private void setMethodToUpdateUiAfterChangingBluetoothStatus(IUpdateAfterChangingBluetoothStatus update){
-        Log.i(TAG, "setMethodToUpdateUiAfterChangingBluetoothStatus() start");
-        if(update==null){
-            Log.i(TAG, "setMethodToUpdateUiAfterChangingBluetoothStatus() gdy null");
-            iUpdateAfterChangingStatus=new IUpdateAfterChangingBluetoothStatus() {
-                @Override
-                public void updateUI() {
-                }
-            };
-        }else{
-            Log.i(TAG, "setMethodToUpdateUiAfterChangingBluetoothStatus() gdy nie null");
-            iUpdateAfterChangingStatus=update;
-        }
-        Log.i(TAG, "setMethodToUpdateUiAfterChangingBluetoothStatus() koniec");
-    }
-
-    public void updateUiAfterChangingBluetoothStatus()
-    {
+    void updateUiAfterChangingBluetoothStatus() { //TODO: zastanowić sięczy nazwa sensowna i czy wg potrzebne
         Log.i(TAG, "updateUiAfterChangingBluetoothStatus() start");
-        Runnable runner = new BluetoothStatusUpdater(iUpdateAfterChangingStatus);
-        changingStatusThread=new Thread(runner);
+        Runnable runner = new BluetoothStatusUpdater();
+        changingStatusThread = new Thread(runner);
         changingStatusThread.start();
         Log.i(TAG, "updateUiAfterChangingBluetoothStatus() koniec");
     }
 
-    public void stoppedReceivingData(){
-        Log.i(TAG,"stoppedReceivingData()");
-        if(recevingDataThread!=null)
-        if(recevingDataThread.isAlive())
-            recevingDataThread.interrupt();
+    void stoppedReceivingData() {
+        Log.i(TAG, "stoppedReceivingData() start");
+        if (receivingDataThread != null)
+            if (receivingDataThread.isAlive()) {
+                receivingDataThread.interrupt();
+                Log.i(TAG,"stoppedReceivingData() zatrzymano");
+            }
+        Log.i(TAG,"stoppedReceivingData() koniec");
     }
 
-    public void stoppedChangingStatus(){
-        Log.i(TAG,"stoppedChangingStatus()");
-        if(changingStatusThread!=null)
-        if(changingStatusThread.isAlive())
-            changingStatusThread.interrupt();
+    void stoppedChangingStatus() {
+        Log.i(TAG, "stoppedChangingStatus()");
+        if (changingStatusThread != null)
+            if (changingStatusThread.isAlive())
+                changingStatusThread.interrupt();
     }
 
-    private void setAddress(String add){
-        address=add;
+    private void setAddress(String add) {
+        address = add;
     }
 
-    public void turnOnBT() throws Exception
-    {
-        if(btAdapter != null) {
+    void turnOnBT() throws Exception {
+        if (btAdapter != null) {
             if (!btAdapter.isEnabled()) {
                 Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                activity.startActivityForResult(enableBluetooth,0);
+                activity.startActivityForResult(enableBluetooth, 0);
             }
-        }else{
+        } else {
             throw new Exception("No bluetooth adapter available");
         }
     }
 
-    private void beginListenForData()
-    {
+    private void beginListenForData(final byte delimiter) {
         Log.i(TAG, "beginListenForData() start");
-        final byte delimiter = 13; //TODO: dodać wybór
-        stopWorker = false;
-        readBufferPosition = 0;
-        readBuffer = new byte[1024];
-        recevingDataThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                int counter=1000000;
-                while(!Thread.currentThread().isInterrupted() && !stopWorker)
-                {
-                    if(counter == 1000000) {
-                        Log.i(TAG, "run() działa");
-                        counter=0;
+        receivingDataThread = new Thread(new Runnable() {
+            public void run() {
+                counterThread++;
+                int num=counterThread;
+                byte[] readBuffer;
+                int readBufferPosition;
+                readBufferPosition = 0;
+                readBuffer = new byte[1024];
+                int counter = 1000000;
+                while (!Thread.currentThread().isInterrupted() && btConnected) {
+                    if (counter == 1000000) {
+                        Log.i(TAG, String.format(Locale.getDefault(), "run() %s działa",  Integer.toString(num)));
+                        counter = 0;
                     }
                     counter++;
-                    try
-                    {
+                    try {
                         int bytesAvailable = btInputStream.available();
-                        if(bytesAvailable > 0)
-                        {
+                        if (bytesAvailable > 0) {
                             byte[] packetBytes = new byte[bytesAvailable];
                             btInputStream.read(packetBytes);
-                            for(int i=0;i<bytesAvailable;i++)
-                            {
+                            for (int i = 0; i < bytesAvailable; i++) {
                                 byte b = packetBytes[i];
-                                if(b == delimiter)
-                                {
+                                if (b == delimiter) {
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
-                                    Log.i(TAG, "run() odebrano: "+data);
-                                    //delegate.StatusChanging(Status.RECEIVED);
+                                    Log.i(TAG, String.format(Locale.getDefault(), "run() %s odebrano: %s",  Integer.toString(num), data ));
+                                    delegate.AfterReceivingData(data);
                                     readBufferPosition = 0;
-                                    Thread uiThread=new Thread(new Runnable() {
-                                        public void run() {
-                                            activity.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    iUpdateReceiveUI.updateUI(data);
-                                                }
-                                            });
-                                        }
-                                    });
-
-                                   uiThread.start();
-                                }
-                                else
-                                {
+                                    Thread.sleep(100);
+                                } else {
                                     readBuffer[readBufferPosition++] = b;
                                 }
                             }
                         }
-                    }
-                    catch (IOException ex){
-                        Log.i(TAG,"run() catch IO" +ex.getMessage());
+                    } catch (IOException ex) {
+                        Log.i(TAG, String.format(Locale.getDefault(), "run() %s catch IO %s",  Integer.toString(num),ex.getMessage()));
                         ex.printStackTrace();
-                        stopWorker = true;
-                    }catch (Exception ex){
-                        Log.i(TAG,"run() catch " +ex.getMessage());
+                    } catch (Exception ex) {
+                        Log.i(TAG, String.format(Locale.getDefault(), "run() %s catch %s",  Integer.toString(num),ex.getMessage()));
                         ex.printStackTrace();
                     }
                 }
-                Log.i(TAG,"run() koniec");
+                Log.i(TAG, String.format(Locale.getDefault(), "run() %s koniec",  Integer.toString(num)));
             }
         });
 
-        recevingDataThread.start();
+        receivingDataThread.start();
         Log.i(TAG, "beginListenForData() koniec");
     }
 
-    void sendData(String msg) throws IOException
-    {
+    void sendData(String msg) throws IOException {
         Log.i(TAG, "sendData(" + msg + ")");
         btOutputStream.write(msg.getBytes());
     }
 
-    void disconnect() throws IOException
-    {
-        btConnected =false;
+    void disconnect() throws IOException {
+        btConnected = false;
         stoppedReceivingData();
-        stopWorker = true;
-        if(btSocket!=null) {
-            if(btOutputStream!=null)
+        if (btSocket != null) {
+            if (btOutputStream != null)
                 btOutputStream.close();
-            if(btInputStream!=null)
+            if (btInputStream != null)
                 btInputStream.close();
             btSocket.close();
         }
@@ -255,15 +186,14 @@ public class MyBluetooth {
     }
 
 
-    public void connect(IMyBluetooth delegate) throws IOException{
+    void connect() {
         Log.i(TAG, "connect() start");
-        new ConnectBluetooth(delegate).execute();
+        new ConnectBluetooth().execute();
         Log.i(TAG, "connect() koniec");
     }
 
-    private void toastMsg(String s)
-    {
-        Toast.makeText(context,s,Toast.LENGTH_LONG).show();
+    private void toastMsg(String s) {
+        Toast.makeText(context, s, Toast.LENGTH_LONG).show();
     }
 
     /**********************************************************************************************/
@@ -272,15 +202,8 @@ public class MyBluetooth {
     {
         private boolean connectSuccess = true; //if it's here, it's almost connected
 
-        public ConnectBluetooth(IMyBluetooth _delegate){
-            Log.i(TAG, "ConnectBluetooth() start");
-            delegate=_delegate;
-            Log.i(TAG, "ConnectBluetooth() koniec");
-        }
-
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             Log.i(TAG, "onPreExecute() start");
             progress = ProgressDialog.show(activity, "Connecting...", "Please wait!!!");  //show a progress dialog
             Log.i(TAG, "onPreExecute() koniec");
@@ -301,9 +224,7 @@ public class MyBluetooth {
                     btOutputStream = btSocket.getOutputStream();
                     btInputStream = btSocket.getInputStream();
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 Log.i(TAG, "doInBackground() " + e.getMessage());
                 e.printStackTrace();
                 toastMsg("Error");
@@ -312,26 +233,24 @@ public class MyBluetooth {
             Log.i(TAG, "doInBackground() koniec");
             return null;
         }
+
         @Override
         protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
         {
             Log.i(TAG, "onPostExecute() start");
             super.onPostExecute(result);
 
-            if (!connectSuccess)
-            {
+            if (!connectSuccess) {
                 Log.i(TAG, "onPostExecute() nie połączono");
                 toastMsg("Connection Failed");
-                btConnected=false;
-                btSocket=null;
-                btOutputStream=null;
-                btInputStream=null;
-            }
-            else
-            {
+                btConnected = false;
+                btSocket = null;
+                btOutputStream = null;
+                btInputStream = null;
+            } else {
                 Log.i(TAG, "onPostExecute() połączono");
                 btConnected = true;
-                delegate.StatusChanging(MyBluetooth.Status.CONNECTED);
+                //delegate.StatusChanging(MyBluetooth.Status.CONNECTED, "");
             }
             progress.dismiss();
             Log.i(TAG, "onPostExecute() koniec");
@@ -342,8 +261,8 @@ public class MyBluetooth {
 
     private class BluetoothStatusUpdater implements Runnable {
         private IntentFilter filter;
-        private boolean first=true;
-        private boolean[] lastState={isBtTurnedOn(),isBtConnected()};
+        private boolean first = true;
+        private boolean[] lastState = {isBtTurnedOn(), isBtConnected()};
 
         private final BroadcastReceiver M_RECEIVER = new BroadcastReceiver() {
             @Override
@@ -352,23 +271,19 @@ public class MyBluetooth {
                 String action = intent.getAction();
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && !btConnected) {
-                    btConnected =true;
+                    btConnected = true;
                     toastMsg("Connected");
                     Log.i(TAG, "onReceive() connected");
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) {
-                    try
-                    {
+                    try {
                         disconnect();
                         toastMsg("Disconnected");
                         Log.i(TAG, "onReceive() disconnected");
-                        //delegate.StatusChanging(MyBluetooth.Status.DISCONNECTED);
-                    }
-                    catch (IOException ex) {
-                        Log.i(TAG, "onReceive() catch IO" + ex.getMessage());
+                    } catch (IOException ex) {
+                        Log.i(TAG, "onReceive() catch IO " + ex.getMessage());
                         toastMsg("Error");
                         ex.printStackTrace();
-                    }
-                    catch (Exception ex){
+                    } catch (Exception ex) {
                         Log.i(TAG, "onReceive() catch " + ex.getMessage());
                     }
                 }
@@ -376,9 +291,8 @@ public class MyBluetooth {
             }
         };
 
-        public BluetoothStatusUpdater(IUpdateAfterChangingBluetoothStatus update){
+        private BluetoothStatusUpdater() {
             Log.i(TAG, "BluetoothStatusUpdater() start");
-            iUpdateAfterChangingStatus = update;
             filter = new IntentFilter();
             filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
             filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
@@ -389,11 +303,11 @@ public class MyBluetooth {
 
         @Override
         public void run() {
-            int max=2000000;
-            int counter=max;
+            int max = 2000000;
+            int counter = max;
             Log.i(TAG, "BSU run() start");
             try {
-                while(!Thread.currentThread().isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {
                     if (counter == max) {
                         if (btAdapter != null) {
                             if (!btAdapter.isEnabled()) {
@@ -415,18 +329,18 @@ public class MyBluetooth {
 
                         if (isBtTurnedOn() != lastState[0] || isBtConnected() != lastState[1] || first) {
                             Log.i(TAG, "BSU run() zmiana stanu");
-                            Thread uiThread = new Thread(new Runnable() {
-                                public void run() {
-                                    activity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            iUpdateAfterChangingStatus.updateUI();
-                                        }
-                                    });
+                            if (isBtTurnedOn() != lastState[0] && isBtTurnedOn()) {
+                                delegate.AfterTurningOnBluetooth();
+                            }
+                            if (isBtTurnedOn()) {
+                                if (isBtConnected()) {
+                                    delegate.AfterConnecting();
+                                } else {
+                                    delegate.AfterDisconnecting();
                                 }
-                            });
-                            uiThread.start();
-
+                            } else {
+                                delegate.AfterTurningOffBluetooth();
+                            }
                             lastState[0] = isBtTurnedOn();
                             lastState[1] = isBtConnected();
                             first = false;
@@ -437,10 +351,10 @@ public class MyBluetooth {
                     counter++;
                 }
             } catch (IOException e) {
-                Log.i(TAG, "BSU run() catch io "+e.getMessage());
+                Log.i(TAG, "BSU run() catch io " + e.getMessage());
                 e.printStackTrace();
             } catch (Exception e) {
-                Log.i(TAG, "BSU run() catch "+e.getMessage());
+                Log.i(TAG, "BSU run() catch " + e.getMessage());
                 e.printStackTrace();
             }
             Log.i(TAG, "BSU run() koniec");
@@ -449,19 +363,15 @@ public class MyBluetooth {
 
     /**********************************************************************************************/
 
-    public interface IUpdateAfterChangingBluetoothStatus {
-        void updateUI();
-    }
+    interface IMyBluetooth {
+        void AfterConnecting();
 
-    /**********************************************************************************************/
+        void AfterDisconnecting();
 
-    public interface IUpdateUiAfterReceivingData {
-        void updateUI(String data);
-    }
+        void AfterTurningOnBluetooth();
 
-    /**********************************************************************************************/
+        void AfterTurningOffBluetooth();
 
-    public interface IMyBluetooth{
-        void StatusChanging(MyBluetooth.Status status);
+        void AfterReceivingData(final String data);
     }
 }

@@ -22,8 +22,6 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     private static final String TAG = "MyBluetooth";
     private final String[] turnArray = {"f", "g", "h", "j", "k", "l"};
     private final String[] speedArray = {"\\", "r", "t", "y", "u", "i", "o", "p", "[", "]"};
-    MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData = null;
-    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus = null;
     TextView textRight;
     TextView textLeft;
     TextView textSpeed;
@@ -73,7 +71,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         sbSpeed = (SeekBar) findViewById(R.id.sbSpeed);
         sbSpeed.setMax(9);
         sbSpeed.setProgress(3);
-        tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(sbSpeed.getProgress())));
+        tvSpeed.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Speed1), Integer.toString(sbSpeed.getProgress())));
         sbSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
 
@@ -88,7 +86,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(progress)));
+                tvSpeed.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Speed1), Integer.toString(progress)));
                 if (bluetooth.isBtConnected()) {
                     try {
                         bluetooth.sendData(speedArray[progress]);
@@ -103,7 +101,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         sbTurn = (SeekBar) findViewById(R.id.sbTurn);
         sbTurn.setMax(5);
         sbTurn.setProgress(3);
-        tvTurn.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Turn1), Integer.toString(sbTurn.getProgress())));
+        tvTurn.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Turn1), Integer.toString(sbTurn.getProgress())));
         sbTurn.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
 
@@ -118,7 +116,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                tvTurn.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Turn1), Integer.toString(progress)));
+                tvTurn.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Turn1), Integer.toString(progress)));
                 if (bluetooth.isBtConnected()) {
                     try {
                         bluetooth.sendData(turnArray[progress]);
@@ -156,55 +154,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         chrono.setText(time);
         info.setText(R.string.Manual1);
 
-        afterReceivingData = new MyBluetooth.IUpdateUiAfterReceivingData() {
-            @Override
-            public void updateUI(String data) {
-                if (data.length() == 15) {
-                    int tmp = Integer.parseInt(data.substring(0, 5));
-                    textLeft.setText(String.valueOf(tmp));
-                    tmp = Integer.parseInt(data.substring(5, 10));
-                    textRight.setText(String.valueOf(tmp));
-                    tmp = Integer.parseInt(data.substring(10, 15));
-                    textSpeed.setText(String.valueOf(tmp));
-                }
-            }
-        };
-
-        afterChangingStatus = new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
-            @Override
-            public void updateUI() {
-                if (bluetooth.isBtTurnedOn()) {
-                    if (bluetooth.isBtConnected()) {
-                        btnConnect.setText(R.string.Disconnect);
-                        setOthers(true, true);
-                        setDirectionalButtons(false, false, false, false, false, false);
-                        setOtherButtons(true, true, false, false, true);
-                        setLedsButtons(true, true, true);
-                        sbTurn.setProgress(3);
-                        sbSpeed.setProgress(3);
-                        tvTurn.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Turn1), Integer.toString(sbTurn.getProgress())));
-                        tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(sbSpeed.getProgress())));
-                    } else {
-                        btnConnect.setText(R.string.Connect);
-                        setOthers(false, false);
-                        setDirectionalButtons(false, false, false, false, false, false);
-                        setOtherButtons(false, false, false, false, true);
-                        setLedsButtons(false, false, false);
-                        chrono.stop();
-                    }
-                } else {
-                    btnConnect.setText(R.string.TurnOnBt);
-                    setOthers(false, false);
-                    setDirectionalButtons(false, false, false, false, false, false);
-                    setOtherButtons(false, false, false, false, true);
-                    setLedsButtons(false, false, false);
-                }
-            }
-        };
-
-        bluetooth = new MyBluetooth(TestActivity.this, getApplicationContext(), "00:12:6F:6B:C0:A2", afterReceivingData, afterChangingStatus);
+        bluetooth = new MyBluetooth(TestActivity.this, "00:12:6F:6B:C0:A2");
         bluetooth.updateUiAfterChangingBluetoothStatus();
-        ifConnected();
     }
 
     public void changedClick(View v) {
@@ -220,10 +171,10 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             tvTurn.setVisibility(View.INVISIBLE);
             btnLeftR.setVisibility(View.INVISIBLE);
             btnRightR.setVisibility(View.INVISIBLE);
-            btnSpeedDown.setVisibility(View.INVISIBLE);
             btnLeft.setText(R.string.Kp1);
             btnRight.setText(R.string.Kd1);
             btnSpeedUp.setText(R.string.Speed1a);
+            btnSpeedDown.setText(R.string.Eeprom1);
             btnMax.setText(R.string.Clear1);
             btnPause.setText(R.string.Save1);
             if (bluetooth.isBtConnected()) {
@@ -235,7 +186,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             }
             setOthers(true, false);
-            setDirectionalButtons(true, true, true, false, false, false);
+            setDirectionalButtons(true, true, true, false, true, false);
             setOtherButtons(true, true, true, false, true);
         } else {
             info.setText(R.string.Manual1);
@@ -257,7 +208,6 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             btnPause.setText(R.string.Pauza1);
             btnLeftR.setVisibility(View.VISIBLE);
             btnRightR.setVisibility(View.VISIBLE);
-            btnSpeedDown.setVisibility(View.VISIBLE);
             setOthers(true, true);
             setDirectionalButtons(false, false, false, false, false, false);
             setOtherButtons(true, true, false, false, true);
@@ -293,10 +243,18 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                     bluetooth.sendData("s");
                     setDirectionalButtons(true, true, true, true, false, true);
                     setOtherButtons(false, true, true, true, false);
+                } else {
+                    bluetooth.sendData(".");
+                    Thread.sleep(100);
+                    bluetooth.sendData("?");
+                    setOtherButtons(true, true, true, false, true);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                msg("Interrupted Error");
             }
         }
     }
@@ -383,7 +341,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 if (cbAuto.isChecked()) {
                     bluetooth.sendData("8");
                     setOthers(false, true);
-                    setDirectionalButtons(false, false, false, true, true, true);
+                    setDirectionalButtons(false, false, false, true, false, true);
                     setOtherButtons(false, false, false, true, false);
                 } else {
                     setOthers(false, true);
@@ -405,7 +363,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 if (cbAuto.isChecked()) {
                     bluetooth.sendData("0");
                     setOthers(true, true);
-                    setDirectionalButtons(true, true, true, false, false, false);
+                    setDirectionalButtons(true, true, true, false, true, false);
                     setOtherButtons(true, true, true, false, true);
                 } else {
                     bluetooth.sendData("x");
@@ -429,7 +387,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 setOtherButtons(false, false, false, true, false);
             } else {
                 sbSpeed.setProgress(speedArray.length - 1);
-                tvSpeed.setText(String.format(Locale.getDefault(),"%s%s",getString(R.string.Speed1), Integer.toString(speedArray.length - 1)));
+                tvSpeed.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Speed1), Integer.toString(speedArray.length - 1)));
                 bluetooth.sendData(speedArray[speedArray.length - 1]);
             }
         } catch (IOException ex) {
@@ -464,11 +422,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                     ex.printStackTrace();
                 }
             } else {
-                try {
-                    bluetooth.connect(this);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                bluetooth.connect();
             }
         } else {
             try {
@@ -548,11 +502,14 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     private void ifConnected() {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.startReceiving();
+                final byte delimiter = 13;
+                bluetooth.startReceiving(delimiter);
                 Thread.sleep(50);
                 bluetooth.sendData(speedArray[sbSpeed.getProgress()]);
                 Thread.sleep(50);
                 bluetooth.sendData(turnArray[sbTurn.getProgress()]);
+                Thread.sleep(50);
+                bluetooth.sendData("0");
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 msg("Interrupted Error");
@@ -581,25 +538,114 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     }
 
     @Override
-    public void StatusChanging(MyBluetooth.Status status) {
-        switch(status)
-        {
-            case CONNECTED:
-                boolean flag = false;
-                while (!flag) {
-                    if (bluetooth.isBtTurnedOn()) {
-                        try {
-                            Thread.sleep(100);
-                            ifConnected();
-                            flag = true;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+    public void AfterConnecting() {
+        Log.i(TAG, "StatusChanging CONNECTED");
+        boolean flag = false;
+        while (!flag) {
+            if (bluetooth.isBtTurnedOn()) {
+                try {
+                    Thread.sleep(100);
+                    ifConnected();
+                    flag = true;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                break;
-            default:
-                break;
+            }
+        }
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.Disconnect);
+                        if (!cbAuto.isChecked()) {
+                            setOthers(true, true);
+                            setDirectionalButtons(false, false, false, false, false, false);
+                            setOtherButtons(true, true, false, false, true);
+                            setLedsButtons(true, true, true);
+                        } else {
+                            setOthers(true, true);
+                            setDirectionalButtons(true, true, true, false, true, false);
+                            setOtherButtons(true, true, true, false, true);
+                            setLedsButtons(true, true, true);
+                        }
+                        sbTurn.setProgress(3);
+                        sbSpeed.setProgress(3);
+                        tvTurn.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Turn1), Integer.toString(sbTurn.getProgress())));
+                        tvSpeed.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Speed1), Integer.toString(sbSpeed.getProgress())));
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterDisconnecting() {
+        Log.i(TAG, "StatusChanging DISCONNECTED");
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.Connect);
+                        setOthers(false, false);
+                        setDirectionalButtons(false, false, false, false, false, false);
+                        setOtherButtons(false, false, false, false, true);
+                        setLedsButtons(false, false, false);
+                        chrono.stop();
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterTurningOnBluetooth() {
+        Log.i(TAG, "StatusChanging BT_ON");
+    }
+
+    @Override
+    public void AfterTurningOffBluetooth() {
+        Log.i(TAG, "StatusChanging BT_OFF");
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.TurnOnBt);
+                        setOthers(false, false);
+                        setDirectionalButtons(false, false, false, false, false, false);
+                        setOtherButtons(false, false, false, false, true);
+                        setLedsButtons(false, false, false);
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterReceivingData(final String data) {
+        Log.i(TAG, "StatusChanging RECEIVED");
+        if (data.length() == 15) {
+            Thread uiThread = new Thread(new Runnable() {
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int tmp = Integer.parseInt(data.substring(0, 5));
+                            textLeft.setText(String.valueOf(tmp));
+                            tmp = Integer.parseInt(data.substring(5, 10));
+                            textRight.setText(String.valueOf(tmp));
+                            tmp = Integer.parseInt(data.substring(10, 15));
+                            textSpeed.setText(String.valueOf(tmp));
+                        }
+                    });
+                }
+            });
+            uiThread.start();
         }
     }
 }

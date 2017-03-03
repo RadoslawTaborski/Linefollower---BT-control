@@ -16,8 +16,6 @@ import java.io.IOException;
 public class CompetitionActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth {
     public MyBluetooth bluetooth;
     private static final String TAG = "MyBluetooth";
-    MyBluetooth.IUpdateUiAfterReceivingData afterReceivingData = null;
-    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus = null;
     TextView tvSpeed;
     TextView tvKP;
     TextView tvKD;
@@ -55,64 +53,8 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         tvSensorsData = (TextView) findViewById(R.id.tvData);
         tvSensorsData.setMovementMethod(new ScrollingMovementMethod());
 
-
-        afterReceivingData = new MyBluetooth.IUpdateUiAfterReceivingData() {
-            @Override
-            public void updateUI(String data) {
-                if (data.length() == 15) {
-                    Log.i(TAG, "odebrano " + data);
-                    int tmp = Integer.parseInt(data.substring(0, 5));
-                    tvKP.setText(String.valueOf(tmp));
-                    tmp = Integer.parseInt(data.substring(5, 10));
-                    tvKD.setText(String.valueOf(tmp));
-                    tmp = Integer.parseInt(data.substring(10, 15));
-                    tvSpeed.setText(String.valueOf(tmp));
-                } else {
-                    if (data.charAt(data.length() - 1) == '\r')
-                        Log.i(TAG, "odebrano " + data);
-                    tvSensorsData.setText(tvSensorsData.getText() + "\n" + data);
-                }
-            }
-        };
-
-        afterChangingStatus = new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
-            @Override
-            public void updateUI() {
-                if (bluetooth.isBtTurnedOn()) {
-                    if (bluetooth.isBtConnected()) {
-                        btnConnect.setText(R.string.Disconnect);
-                        btnStart.setEnabled(true);
-                        btnStop.setEnabled(false);
-                        btnClear.setEnabled(true);
-                        btnRead.setEnabled(false);
-                        btnEeprom.setEnabled(true);
-                        btnConnect.setEnabled(true);
-                    } else {
-                        btnConnect.setText(R.string.Connect);
-                        btnStart.setEnabled(false);
-                        btnStop.setEnabled(false);
-                        btnClear.setEnabled(false);
-                        btnRead.setEnabled(false);
-                        btnEeprom.setEnabled(false);
-                        btnConnect.setEnabled(true);
-                        chrono.stop();
-                    }
-                } else {
-                    btnConnect.setText(R.string.TurnOnBt);
-                    btnStart.setEnabled(false);
-                    btnStop.setEnabled(false);
-                    btnClear.setEnabled(false);
-                    btnRead.setEnabled(false);
-                    btnEeprom.setEnabled(false);
-                    btnConnect.setEnabled(true);
-                }
-            }
-        };
-
-        bluetooth = new MyBluetooth(CompetitionActivity.this, getApplicationContext(), "00:12:6F:6B:C0:A2", afterReceivingData, afterChangingStatus);
+        bluetooth = new MyBluetooth(CompetitionActivity.this, "00:12:6F:6B:C0:A2");
         bluetooth.updateUiAfterChangingBluetoothStatus();
-        ifConnected();
-
     }
 
     public void startClick(View v) {
@@ -230,11 +172,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     ex.printStackTrace();
                 }
             } else {
-                try {
-                    bluetooth.connect(this);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                bluetooth.connect();
             }
         } else {
             try {
@@ -253,7 +191,8 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     private void ifConnected() {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.startReceiving();
+                final byte delimiter=13;
+                bluetooth.startReceiving(delimiter);
                 Thread.sleep(50);
                 bluetooth.sendData("?");
             } catch (IOException ex) {
@@ -281,25 +220,113 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     }
 
     @Override
-    public void StatusChanging(MyBluetooth.Status status) {
-        switch(status)
-        {
-            case CONNECTED:
-                boolean flag = false;
-                while (!flag) {
-                    if (bluetooth.isBtTurnedOn()) {
-                        try {
-                            Thread.sleep(100);
-                            ifConnected();
-                            flag = true;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+    public void AfterConnecting() {
+        Log.i(TAG, "StatusChanging CONNECTED");
+        boolean flag = false;
+        while (!flag) {
+            if (bluetooth.isBtTurnedOn()) {
+                try {
+                    Thread.sleep(100);
+                    ifConnected();
+                    flag = true;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.Disconnect);
+                        btnStart.setEnabled(true);
+                        btnStop.setEnabled(false);
+                        btnClear.setEnabled(true);
+                        btnRead.setEnabled(false);
+                        btnEeprom.setEnabled(true);
+                        btnConnect.setEnabled(true);
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterDisconnecting() {
+        Log.i(TAG, "StatusChanging DISCONNECTED");
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.Connect);
+                        btnStart.setEnabled(false);
+                        btnStop.setEnabled(false);
+                        btnClear.setEnabled(false);
+                        btnRead.setEnabled(false);
+                        btnEeprom.setEnabled(false);
+                        btnConnect.setEnabled(true);
+                        chrono.stop();
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterTurningOnBluetooth() {
+        Log.i(TAG, "StatusChanging BT_ON");
+    }
+
+    @Override
+    public void AfterTurningOffBluetooth() {
+        Log.i(TAG, "StatusChanging BT_OFF");
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.TurnOnBt);
+                        btnStart.setEnabled(false);
+                        btnStop.setEnabled(false);
+                        btnClear.setEnabled(false);
+                        btnRead.setEnabled(false);
+                        btnEeprom.setEnabled(false);
+                        btnConnect.setEnabled(true);
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterReceivingData(final String data) {
+        Log.i(TAG, "StatusChanging RECEIVED");
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (data.length() == 15) {
+                            Log.i(TAG, "odebrano " + data);
+                            int tmp = Integer.parseInt(data.substring(0, 5));
+                            tvKP.setText(String.valueOf(tmp));
+                            tmp = Integer.parseInt(data.substring(5, 10));
+                            tvKD.setText(String.valueOf(tmp));
+                            tmp = Integer.parseInt(data.substring(10, 15));
+                            tvSpeed.setText(String.valueOf(tmp));
+                        } else {
+                            if(data.charAt(data.length()-1)=='\n')
+                                tvSensorsData.setText(tvSensorsData.getText() + "\n" + data);
                         }
                     }
-                }
-                break;
-            default:
-                break;
-        }
+                });
+            }
+        });
+        uiThread.start();
     }
 }

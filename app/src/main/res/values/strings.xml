@@ -29,6 +29,7 @@
     <string name="Turn1">TURN=</string>
     <string name="Save1">SAVE</string>
     <string name="Clear1">CLEAR</string>
+    <string name="Eeprom1">EEPROM</string>
 
     <string name="Competition">COMPETITION</string>
     <string name="Kp2">KP</string>

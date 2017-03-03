@@ -22,7 +22,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
     private MyBluetooth bluetooth;
     private SensorManager SM;
     Sensor mySensor;
-    MyBluetooth.IUpdateAfterChangingBluetoothStatus afterChangingStatus = null;
     private static final String TAG = "MyBluetooth";
     Button btnStart;
     Button btnConnect;
@@ -99,34 +98,8 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         float x = (sbSpeed.getThumb().getBounds().centerX() + sbSpeed.getX());
         tvSpeed.setX(x);
 
-        afterChangingStatus = new MyBluetooth.IUpdateAfterChangingBluetoothStatus() {
-            @Override
-            public void updateUI() {
-                if (bluetooth.isBtTurnedOn()) {
-                    if (bluetooth.isBtConnected()) {
-                        btnConnect.setText(R.string.Disconnect);
-                        sbSpeed.setProgress(3);
-                        btnStart.setEnabled(true);
-                        btnR.setEnabled(true);
-                        sbSpeed.setEnabled(true);
-                    } else {
-                        btnConnect.setText(R.string.Connect);
-                        btnStart.setEnabled(false);
-                        btnR.setEnabled(false);
-                        sbSpeed.setEnabled(false);
-                    }
-                } else {
-                    btnConnect.setText(R.string.TurnOnBt);
-                    btnStart.setEnabled(false);
-                    btnR.setEnabled(false);
-                    sbSpeed.setEnabled(false);
-                }
-            }
-        };
-
-        bluetooth = new MyBluetooth(MotionControlActivity.this, getApplicationContext(), "00:12:6F:6B:C0:A2", null, afterChangingStatus);
+        bluetooth = new MyBluetooth(MotionControlActivity.this, "00:12:6F:6B:C0:A2");
         bluetooth.updateUiAfterChangingBluetoothStatus();
-        ifConnected();
 
         Log.i(TAG, "MotionControlActivityCreated");
     }
@@ -140,11 +113,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                     ex.printStackTrace();
                 }
             } else {
-                try {
-                    bluetooth.connect(this);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                bluetooth.connect();
             }
         } else {
             try {
@@ -271,26 +240,83 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
     }
 
     @Override
-    public void StatusChanging(MyBluetooth.Status status) {
-        switch(status)
-        {
-            case CONNECTED:
-                boolean flag = false;
-                while (!flag) {
-                    if (bluetooth.isBtTurnedOn()) {
-                        try {
-                            Thread.sleep(100);
-                            ifConnected();
-                            flag = true;
-                            Log.i(TAG,"StatusChanging koniec");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+    public void AfterConnecting() {
+        Log.i(TAG, "StatusChanging CONNECTED");
+        boolean flag = false;
+        while (!flag) {
+            if (bluetooth.isBtTurnedOn()) {
+                try {
+                    Thread.sleep(100);
+                    ifConnected();
+                    flag = true;
+                    Log.i(TAG,"StatusChanging koniec");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                break;
-            default:
-                break;
+            }
         }
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.Disconnect);
+                        sbSpeed.setProgress(3);
+                        btnStart.setEnabled(true);
+                        btnR.setEnabled(true);
+                        sbSpeed.setEnabled(true);
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterDisconnecting() {
+        Log.i(TAG, "StatusChanging DISCONNECTED");
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.Connect);
+                        btnStart.setEnabled(false);
+                        btnR.setEnabled(false);
+                        sbSpeed.setEnabled(false);
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterTurningOnBluetooth() {
+        Log.i(TAG, "StatusChanging BT_ON");
+    }
+
+    @Override
+    public void AfterTurningOffBluetooth() {
+        Log.i(TAG, "StatusChanging BT_OFF");
+        Thread uiThread = new Thread(new Runnable() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnConnect.setText(R.string.TurnOnBt);
+                        btnStart.setEnabled(false);
+                        btnR.setEnabled(false);
+                        sbSpeed.setEnabled(false);
+                    }
+                });
+            }
+        });
+        uiThread.start();
+    }
+
+    @Override
+    public void AfterReceivingData(String data) {
+        Log.i(TAG, "StatusChanging RECEIVED");
     }
 }
