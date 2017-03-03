@@ -13,7 +13,7 @@ public final class ControlCommands {
     static final String PARAMETERS_LOAD = ".";
     static final String SPEED_INCREASE = ",";
     static final String KD_INCREASE = "+";
-    static final String KP_INCREASE = "-";
+    static final String KP_INCREASE = "=";
     static final String AUTO_START = "8";
     static final String STOP = "0";
     static final String WHEELS_CLEANING = "7";
@@ -24,6 +24,6 @@ public final class ControlCommands {
     static final String SENSORS_READINGS = "3";
     static final String NOTHING = "z";
 
-    static final int sleepTime1 = 50;
+    static final int sleepTime1 = 100;
     static final int sleepTime2 =100;
 }

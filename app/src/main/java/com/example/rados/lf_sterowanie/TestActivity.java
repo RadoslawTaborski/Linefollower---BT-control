@@ -19,7 +19,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     public MyBluetooth bluetooth;
     public boolean auto = false;
     private long timeWhenStopped = 0;
-    private static final String TAG = "MyBluetooth";
+   // private static final String TAG = "MyBluetooth";
     TextView textRight;
     TextView textLeft;
     TextView textSpeed;
@@ -51,7 +51,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         setContentView(R.layout.activity_test);
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        Log.i(TAG, "start");
+        //Log.i(TAG, "start");
         final String zero = "0";
         textRight = (TextView) findViewById(R.id.textRight);
         textLeft = (TextView) findViewById(R.id.textLeft);
@@ -502,6 +502,8 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             try {
                 final byte delimiter = 13;
                 bluetooth.startReceiving(delimiter);
+                Thread.sleep(ControlCommands.sleepTime2);
+                bluetooth.sendData(ControlCommands.STOP);
                 Thread.sleep(ControlCommands.sleepTime1);
                 bluetooth.sendData(ControlCommands.SPEED_ARRAY[sbSpeed.getProgress()]);
                 Thread.sleep(ControlCommands.sleepTime1);
@@ -520,7 +522,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
     @Override
     protected void onDestroy() {
-        Log.i(TAG, "onDestroy()");
+       // Log.i(TAG, "onDestroy()");
         if (bluetooth.isBtConnected()) {
             try {
                 bluetooth.sendData(ControlCommands.STOP);
@@ -537,7 +539,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
     @Override
     public void AfterConnecting() {
-        Log.i(TAG, "StatusChanging CONNECTED");
+       // Log.i(TAG, "StatusChanging CONNECTED");
         boolean flag = false;
         while (!flag) {
             if (bluetooth.isBtTurnedOn()) {
@@ -580,7 +582,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
     @Override
     public void AfterDisconnecting() {
-        Log.i(TAG, "StatusChanging DISCONNECTED");
+       // Log.i(TAG, "StatusChanging DISCONNECTED");
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -601,12 +603,12 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
     @Override
     public void AfterTurningOnBluetooth() {
-        Log.i(TAG, "StatusChanging BT_ON");
+        //Log.i(TAG, "StatusChanging BT_ON");
     }
 
     @Override
     public void AfterTurningOffBluetooth() {
-        Log.i(TAG, "StatusChanging BT_OFF");
+        //Log.i(TAG, "StatusChanging BT_OFF");
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -626,7 +628,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
 
     @Override
     public void AfterReceivingData(final String data) {
-        Log.i(TAG, "StatusChanging RECEIVED");
+       // Log.i(TAG, "StatusChanging RECEIVED");
         if (data.length() == 15) {
             Thread uiThread = new Thread(new Runnable() {
                 public void run() {
