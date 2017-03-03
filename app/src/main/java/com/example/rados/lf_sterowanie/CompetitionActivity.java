@@ -62,7 +62,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         chrono.start();
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("8");
+                bluetooth.sendData(ControlCommands.AUTO_START);
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
                 btnClear.setEnabled(false);
@@ -83,7 +83,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         timeWhenStopped = 0;
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("0");
+                bluetooth.sendData(ControlCommands.STOP);
                 btnStart.setEnabled(true);
                 btnStop.setEnabled(false);
                 btnClear.setEnabled(true);
@@ -101,7 +101,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     public void clearClick(View v) {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("7");
+                bluetooth.sendData(ControlCommands.WHEELS_CLEANING);
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
                 btnClear.setEnabled(false);
@@ -119,7 +119,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         if (bluetooth.isBtConnected()) {
             if (!readON) {
                 try {
-                    bluetooth.sendData("3");
+                    bluetooth.sendData(ControlCommands.SENSORS_READINGS);
                     btnStart.setEnabled(false);
                     btnStop.setEnabled(true);
                     btnClear.setEnabled(false);
@@ -132,7 +132,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 }
             } else {
                 try {
-                    bluetooth.sendData("z");
+                    bluetooth.sendData(ControlCommands.NOTHING);
                     btnStart.setEnabled(false);
                     btnStop.setEnabled(true);
                     btnClear.setEnabled(false);
@@ -150,9 +150,9 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     public void eepromClick(View v) {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData(".");
-                Thread.sleep(50);
-                bluetooth.sendData("?");
+                bluetooth.sendData(ControlCommands.PARAMETERS_LOAD);
+                Thread.sleep(ControlCommands.sleepTime1);
+                bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("IO Error");
@@ -193,8 +193,8 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
             try {
                 final byte delimiter=13;
                 bluetooth.startReceiving(delimiter);
-                Thread.sleep(50);
-                bluetooth.sendData("?");
+                Thread.sleep(ControlCommands.sleepTime2);
+                bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
@@ -208,7 +208,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     protected void onDestroy() {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("0");
+                bluetooth.sendData(ControlCommands.STOP);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
@@ -226,7 +226,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         while (!flag) {
             if (bluetooth.isBtTurnedOn()) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(ControlCommands.sleepTime2);
                     ifConnected();
                     flag = true;
                 } catch (InterruptedException e) {

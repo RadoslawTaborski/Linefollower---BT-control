@@ -30,9 +30,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
     SeekBar sbSpeed;
     private boolean started = false;
     private boolean checked = false;
-    private final String[] turnArray = {"f", "g", "h", "j", "k", "l"};
     private final float[] yValue = {2.0f, 3.33f, 4.66f, 6.0f, 7.33f, 8.66f, 10.0f};
-    private final String[] speedArray = {"\\", "r", "t", "y", "u", "i", "o", "p", "[", "]"};
     String last = "";
     String lastDirection = "";
 
@@ -85,7 +83,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                 tvSpeed.setX(x);
                 if (bluetooth.isBtConnected()) {
                     try {
-                        bluetooth.sendData(speedArray[progress]);
+                        bluetooth.sendData(ControlCommands.SPEED_ARRAY[progress]);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         msg("Error");
@@ -126,7 +124,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
     public void startClick(View v) {
         if (started) {
-            lastDirection = send("0");
+            lastDirection = send(ControlCommands.STOP);
             btnStart.setText(R.string.Start3);
             started = false;
             btnConnect.setEnabled(true);
@@ -151,43 +149,63 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         if (z > -zRange && z < zRange && started) {
             if (!checked) {
                 for (int i = 0; i < 6; ++i) {
-                    if (y >= yValue[i] && y < yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("e"))) {
-                        last = send(turnArray[i]);
-                        lastDirection = send("e");
+                    if (y >= yValue[i] && y < yValue[i + 1] && (!last.equals(ControlCommands.TURN_ARRAY[i]) || !lastDirection.equals(ControlCommands.TURNING_RIGHT))) {
+                        last = send(ControlCommands.TURN_ARRAY[i]);
+                        try {
+                            Thread.sleep(ControlCommands.sleepTime1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        lastDirection = send(ControlCommands.TURNING_RIGHT);
                         break;
                     }
                 }
                 for (int i = 0; i < 6; ++i) {
-                    if (y <= -yValue[i] && y > -yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("q"))) {
-                        last = send(turnArray[i]);
-                        lastDirection = send("q");
+                    if (y <= -yValue[i] && y > -yValue[i + 1] && (!last.equals(ControlCommands.TURN_ARRAY[i]) || !lastDirection.equals(ControlCommands.TURNING_LEFT))) {
+                        last = send(ControlCommands.TURN_ARRAY[i]);
+                        try {
+                            Thread.sleep(ControlCommands.sleepTime1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        lastDirection = send(ControlCommands.TURNING_LEFT);
                         break;
                     }
                 }
-                if (y >= -yValue[0] && y <= yValue[0] && !lastDirection.equals("w")) {
-                    lastDirection = send("w");
+                if (y >= -yValue[0] && y <= yValue[0] && !lastDirection.equals(ControlCommands.FORWARD)) {
+                    lastDirection = send(ControlCommands.FORWARD);
                 }
             } else {
                 for (int i = 0; i < 6; ++i) {
-                    if (y >= yValue[i] && y < yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("a"))) {
-                        last = send(turnArray[i]);
-                        lastDirection = send("a");
+                    if (y >= yValue[i] && y < yValue[i + 1] && (!last.equals(ControlCommands.TURN_ARRAY[i]) || !lastDirection.equals(ControlCommands.TURNING_LEFT_R))) {
+                        last = send(ControlCommands.TURN_ARRAY[i]);
+                        try {
+                            Thread.sleep(ControlCommands.sleepTime1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        lastDirection = send(ControlCommands.TURNING_LEFT_R);
                         break;
                     }
                 }
                 for (int i = 0; i < 6; ++i) {
-                    if (y <= -yValue[i] && y > -yValue[i + 1] && (!last.equals(turnArray[i]) || !lastDirection.equals("d"))) {
-                        last = send(turnArray[i]);
-                        lastDirection = send("d");
+                    if (y <= -yValue[i] && y > -yValue[i + 1] && (!last.equals(ControlCommands.TURN_ARRAY[i]) || !lastDirection.equals(ControlCommands.TURNING_RIGHT_R))) {
+                        last = send(ControlCommands.TURN_ARRAY[i]);
+                        try {
+                            Thread.sleep(ControlCommands.sleepTime1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        lastDirection = send(ControlCommands.TURNING_RIGHT_R);
                         break;
                     }
                 }
-                if (y >= -yValue[0] && y <= yValue[0] && !lastDirection.equals("s")) {
-                    lastDirection = send("s");
+                if (y >= -yValue[0] && y <= yValue[0] && !lastDirection.equals(ControlCommands.REVERSE)) {
+                    lastDirection = send(ControlCommands.REVERSE);
                 }
             }
-        } else if (!lastDirection.equals("0")) {
-            lastDirection = send("0");
+        } else if (!lastDirection.equals(ControlCommands.STOP)) {
+            lastDirection = send(ControlCommands.STOP);
         }
     }
 
@@ -215,7 +233,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
     @Override
     protected void onDestroy() {
-        send("0");
+        send(ControlCommands.STOP);
         bluetooth.stoppedChangingStatus();
         bluetooth.stoppedReceivingData();
         SM.unregisterListener(this);
@@ -233,7 +251,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
     private void ifConnected() {
         if (bluetooth.isBtConnected()) {
-            send(speedArray[sbSpeed.getProgress()]);
+            send(ControlCommands.SPEED_ARRAY[sbSpeed.getProgress()]);
             SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
             Log.i(TAG,"ifConnected koniec");
         }
@@ -246,7 +264,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         while (!flag) {
             if (bluetooth.isBtTurnedOn()) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(ControlCommands.sleepTime2);
                     ifConnected();
                     flag = true;
                     Log.i(TAG,"StatusChanging koniec");

@@ -20,8 +20,6 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     public boolean auto = false;
     private long timeWhenStopped = 0;
     private static final String TAG = "MyBluetooth";
-    private final String[] turnArray = {"f", "g", "h", "j", "k", "l"};
-    private final String[] speedArray = {"\\", "r", "t", "y", "u", "i", "o", "p", "[", "]"};
     TextView textRight;
     TextView textLeft;
     TextView textSpeed;
@@ -89,7 +87,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 tvSpeed.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Speed1), Integer.toString(progress)));
                 if (bluetooth.isBtConnected()) {
                     try {
-                        bluetooth.sendData(speedArray[progress]);
+                        bluetooth.sendData(ControlCommands.SPEED_ARRAY[progress]);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         msg("Error");
@@ -119,7 +117,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 tvTurn.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Turn1), Integer.toString(progress)));
                 if (bluetooth.isBtConnected()) {
                     try {
-                        bluetooth.sendData(turnArray[progress]);
+                        bluetooth.sendData(ControlCommands.TURN_ARRAY[progress]);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         msg("Error");
@@ -179,7 +177,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             btnPause.setText(R.string.Save1);
             if (bluetooth.isBtConnected()) {
                 try {
-                    bluetooth.sendData("?");
+                    bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     msg("Error");
@@ -218,12 +216,12 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (cbAuto.isChecked()) {
-                    bluetooth.sendData(",");
-                    Thread.sleep(100);
-                    bluetooth.sendData("?");
+                    bluetooth.sendData(ControlCommands.SPEED_INCREASE);
+                    Thread.sleep(ControlCommands.sleepTime1);
+                    bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
                     setOtherButtons(true, true, true, false, true);
                 } else {
-                    bluetooth.sendData("w");
+                    bluetooth.sendData(ControlCommands.FORWARD);
                     setDirectionalButtons(true, false, true, true, true, true);
                     setOtherButtons(false, true, true, true, false);
                 }
@@ -240,13 +238,13 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (!cbAuto.isChecked()) {
-                    bluetooth.sendData("s");
+                    bluetooth.sendData(ControlCommands.REVERSE);
                     setDirectionalButtons(true, true, true, true, false, true);
                     setOtherButtons(false, true, true, true, false);
                 } else {
-                    bluetooth.sendData(".");
-                    Thread.sleep(100);
-                    bluetooth.sendData("?");
+                    bluetooth.sendData(ControlCommands.PARAMETERS_LOAD);
+                    Thread.sleep(ControlCommands.sleepTime1);
+                    bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
                     setOtherButtons(true, true, true, false, true);
                 }
             } catch (IOException ex) {
@@ -263,12 +261,12 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (cbAuto.isChecked()) {
-                    bluetooth.sendData("+");
-                    Thread.sleep(100);
-                    bluetooth.sendData("?");
+                    bluetooth.sendData(ControlCommands.KD_INCREASE);
+                    Thread.sleep(ControlCommands.sleepTime1);
+                    bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
                     setOtherButtons(true, true, true, false, true);
                 } else {
-                    bluetooth.sendData("e");
+                    bluetooth.sendData(ControlCommands.TURNING_RIGHT);
                     setDirectionalButtons(true, true, false, true, true, true);
                     setOtherButtons(false, true, true, true, false);
                 }
@@ -285,12 +283,12 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (cbAuto.isChecked()) {
-                    bluetooth.sendData("-");
-                    Thread.sleep(100);
-                    bluetooth.sendData("?");
+                    bluetooth.sendData(ControlCommands.KP_INCREASE);
+                    Thread.sleep(ControlCommands.sleepTime1);
+                    bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
                     setOtherButtons(true, true, true, false, true);
                 } else {
-                    bluetooth.sendData("q");
+                    bluetooth.sendData(ControlCommands.TURNING_LEFT);
                     setDirectionalButtons(false, true, true, true, true, true);
                     setOtherButtons(false, true, true, true, false);
                 }
@@ -307,7 +305,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (!cbAuto.isChecked()) {
-                    bluetooth.sendData("a");
+                    bluetooth.sendData(ControlCommands.TURNING_LEFT_R);
                     setDirectionalButtons(true, true, true, false, true, true);
                     setOtherButtons(false, true, true, true, false);
                 }
@@ -322,7 +320,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (!cbAuto.isChecked()) {
-                    bluetooth.sendData("d");
+                    bluetooth.sendData(ControlCommands.TURNING_RIGHT_R);
                     setDirectionalButtons(true, true, true, true, true, false);
                     setOtherButtons(false, true, true, true, false);
                 }
@@ -339,7 +337,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (cbAuto.isChecked()) {
-                    bluetooth.sendData("8");
+                    bluetooth.sendData(ControlCommands.AUTO_START);
                     setOthers(false, true);
                     setDirectionalButtons(false, false, false, true, false, true);
                     setOtherButtons(false, false, false, true, false);
@@ -361,12 +359,12 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (cbAuto.isChecked()) {
-                    bluetooth.sendData("0");
+                    bluetooth.sendData(ControlCommands.STOP);
                     setOthers(true, true);
                     setDirectionalButtons(true, true, true, false, true, false);
                     setOtherButtons(true, true, true, false, true);
                 } else {
-                    bluetooth.sendData("x");
+                    bluetooth.sendData(ControlCommands.STOP);
                     setOthers(true, true);
                     setDirectionalButtons(false, false, false, false, false, false);
                     setOtherButtons(true, true, false, false, true);
@@ -381,14 +379,14 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     public void maxClick(View v) {
         try {
             if (cbAuto.isChecked()) {
-                bluetooth.sendData("7");
+                bluetooth.sendData(ControlCommands.WHEELS_CLEANING);
                 setOthers(false, true);
                 setDirectionalButtons(false, false, false, false, false, false);
                 setOtherButtons(false, false, false, true, false);
             } else {
-                sbSpeed.setProgress(speedArray.length - 1);
-                tvSpeed.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Speed1), Integer.toString(speedArray.length - 1)));
-                bluetooth.sendData(speedArray[speedArray.length - 1]);
+                sbSpeed.setProgress(ControlCommands.SPEED_ARRAY.length - 1);
+                tvSpeed.setText(String.format(Locale.getDefault(), "%s%s", getString(R.string.Speed1), Integer.toString(ControlCommands.SPEED_ARRAY.length - 1)));
+                bluetooth.sendData(ControlCommands.SPEED_ARRAY[ControlCommands.SPEED_ARRAY.length - 1]);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -399,10 +397,10 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         if (bluetooth.isBtConnected()) {
             try {
                 if (cbAuto.isChecked()) {
-                    bluetooth.sendData("9");
+                    bluetooth.sendData(ControlCommands.PARAMETERS_SAVE);
                     btnPause.setEnabled(false);
                 } else {
-                    bluetooth.sendData("x");
+                    bluetooth.sendData(ControlCommands.STOP);
                     setDirectionalButtons(true, true, true, true, true, true);
                     btnPause.setEnabled(false);
                 }
@@ -436,7 +434,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     public void led1Click(View v) {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("b");
+                bluetooth.sendData(ControlCommands.LED1);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
@@ -447,7 +445,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     public void led2Click(View v) {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("n");
+                bluetooth.sendData(ControlCommands.LED2);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
@@ -458,7 +456,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     public void led12Click(View v) {
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("m");
+                bluetooth.sendData(ControlCommands.LED12);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Error");
@@ -504,12 +502,12 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             try {
                 final byte delimiter = 13;
                 bluetooth.startReceiving(delimiter);
-                Thread.sleep(50);
-                bluetooth.sendData(speedArray[sbSpeed.getProgress()]);
-                Thread.sleep(50);
-                bluetooth.sendData(turnArray[sbTurn.getProgress()]);
-                Thread.sleep(50);
-                bluetooth.sendData("0");
+                Thread.sleep(ControlCommands.sleepTime1);
+                bluetooth.sendData(ControlCommands.SPEED_ARRAY[sbSpeed.getProgress()]);
+                Thread.sleep(ControlCommands.sleepTime1);
+                bluetooth.sendData(ControlCommands.TURN_ARRAY[sbTurn.getProgress()]);
+                Thread.sleep(ControlCommands.sleepTime1);
+                bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 msg("Interrupted Error");
@@ -525,7 +523,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         Log.i(TAG, "onDestroy()");
         if (bluetooth.isBtConnected()) {
             try {
-                bluetooth.sendData("0");
+                bluetooth.sendData(ControlCommands.STOP);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("Send Error");
@@ -544,7 +542,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         while (!flag) {
             if (bluetooth.isBtTurnedOn()) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(ControlCommands.sleepTime2);
                     ifConnected();
                     flag = true;
                 } catch (InterruptedException e) {
