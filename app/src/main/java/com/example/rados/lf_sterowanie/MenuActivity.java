@@ -17,7 +17,6 @@ public class MenuActivity extends AppCompatActivity implements MyBluetooth.IMyBl
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         bluetooth = new MyBluetooth(MenuActivity.this, "00:12:6F:6B:C0:A2");
-        bluetooth.updateUiAfterChangingBluetoothStatus();
     }
 
     public void testClick(View view) {

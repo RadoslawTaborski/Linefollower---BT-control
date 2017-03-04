@@ -12,280 +12,280 @@
 
     <TextView
         android:id="@+id/textRight"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btnRight"
         android:layout_alignEnd="@+id/btnRight"
+        android:layout_below="@+id/tvTurn"
         android:layout_toEndOf="@+id/btnSpeedUp"
         android:gravity="center"
-        android:layout_below="@+id/tvTurn" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/textLeft"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/btnLeft"
-        android:gravity="center"
-        android:layout_toStartOf="@+id/btnSpeedUp"
         android:layout_above="@+id/btnRight"
-        android:layout_below="@+id/tvSpeed" />
+        android:layout_alignStart="@+id/btnLeft"
+        android:layout_below="@+id/tvSpeed"
+        android:layout_toStartOf="@+id/btnSpeedUp"
+        android:gravity="center"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/btnRight"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="rightClick"
-        android:width="120dp"
-        android:height="100dp"
-        android:text="@string/RCurve"
         android:layout_above="@+id/btnRightR"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnSpeedUp" />
+        android:layout_toEndOf="@+id/btnSpeedUp"
+        android:width="120dp"
+        android:height="100dp"
+        android:onClick="rightClick"
+        android:text="@string/RCurve"
+        android:textSize="20sp" />
 
     <Button
-        android:text="@string/Stop1"
-        android:width="75dp"
-        android:height="100dp"
+        android:id="@+id/btnStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="stopClick"
-        android:id="@+id/btnStop"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="37dp" />
+        android:layout_marginBottom="37dp"
+        android:width="75dp"
+        android:height="100dp"
+        android:onClick="stopClick"
+        android:text="@string/Stop1" />
 
     <Button
-        android:text="@string/Pauza1"
-        android:height="80dp"
+        android:id="@+id/btnPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="pauseClick"
-        android:id="@+id/btnPause"
-        android:width="20dp"
         android:layout_alignTop="@+id/btnStop"
-        android:layout_toStartOf="@+id/btnStop" />
+        android:layout_toStartOf="@+id/btnStop"
+        android:width="20dp"
+        android:height="80dp"
+        android:onClick="pauseClick"
+        android:text="@string/Pauza1" />
 
     <Button
-        android:text="@string/Connect"
+        android:id="@+id/btnConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnStart"
+        android:layout_centerHorizontal="true"
         android:width="300dp"
         android:height="30dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:onClick="connectClick"
-        android:id="@+id/btnConnect"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/btnStart" />
+        android:text="@string/Connect" />
 
     <Button
         android:id="@+id/btnSpeedUp"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="topClick"
+        android:layout_above="@+id/btnSpeedDown"
+        android:layout_centerHorizontal="true"
         android:width="120dp"
         android:height="100dp"
+        android:onClick="topClick"
         android:text="@string/Up"
-        android:layout_above="@+id/btnSpeedDown"
-        android:layout_centerHorizontal="true" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/textSpeed"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/btnSpeedUp"
+        android:layout_toEndOf="@+id/textLeft"
         android:width="120dp"
         android:gravity="center"
-        android:layout_above="@+id/btnSpeedUp"
-        android:layout_toEndOf="@+id/textLeft" />
+        android:textSize="20sp" />
 
     <Button
-        android:text="@string/LED12"
-        android:onClick="led12Click"
+        android:id="@+id/btnLED12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnLED12"
         android:layout_alignBaseline="@+id/btnLED1"
         android:layout_alignBottom="@+id/btnLED1"
-        android:layout_alignStart="@+id/btnMax" />
+        android:layout_alignStart="@+id/btnMax"
+        android:onClick="led12Click"
+        android:text="@string/LED12" />
 
     <Button
-        android:text="@string/LED2"
-        android:onClick="led2Click"
+        android:id="@+id/btnLED2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnLED2"
         android:layout_alignBaseline="@+id/btnLED12"
         android:layout_alignBottom="@+id/btnLED12"
-        android:layout_toEndOf="@+id/btnLED12" />
+        android:layout_toEndOf="@+id/btnLED12"
+        android:onClick="led2Click"
+        android:text="@string/LED2" />
 
     <Button
         android:id="@+id/btnLeft"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="leftClick"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textLeft"
+        android:layout_toStartOf="@+id/btnSpeedUp"
         android:width="120dp"
         android:height="100dp"
+        android:onClick="leftClick"
         android:text="@string/LCurve"
-        android:layout_below="@+id/textLeft"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/btnSpeedUp" />
+        android:textSize="20sp" />
 
     <Button
-        android:text="@string/RCurveR"
-        android:width="120dp"
-        android:height="100dp"
+        android:id="@+id/btnRightR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="rightRClick"
-        android:id="@+id/btnRightR"
         android:layout_above="@+id/btnStop"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnSpeedDown" />
+        android:layout_toEndOf="@+id/btnSpeedDown"
+        android:width="120dp"
+        android:height="100dp"
+        android:onClick="rightRClick"
+        android:text="@string/RCurveR" />
 
     <Button
-        android:text="@string/LED1"
-        android:onClick="led1Click"
+        android:id="@+id/btnLED1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnLED1"
-        android:layout_below="@+id/chronometer"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp" />
+        android:layout_below="@+id/chronometer"
+        android:layout_marginTop="10dp"
+        android:onClick="led1Click"
+        android:text="@string/LED1" />
 
     <CheckBox
-        android:text="@string/Automatic1"
+        android:id="@+id/cbAuto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/cbAuto"
-        android:onClick="changedClick"
         android:layout_alignBaseline="@+id/btnLED2"
         android:layout_alignBottom="@+id/btnLED2"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:onClick="changedClick"
+        android:text="@string/Automatic1" />
 
     <TextView
-        tools:text="Hello"
-        android:gravity="center"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        tools:text="Hello" />
 
     <chronometer.Chronometer
         android:id="@+id/chronometer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text=""
-        android:gravity="center"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/textView"
-        android:layout_alignParentEnd="true" />
+        android:gravity="center"
+        android:text=""
+        android:textSize="12sp" />
 
     <ProgressBar
+        android:id="@+id/progressBar2"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBar2"
-        android:layout_below="@+id/chronometer"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
-
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sbTurn"
-        android:layout_alignTop="@+id/textSpeed"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/sbSpeed"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/chronometer" />
 
     <SeekBar
+        android:id="@+id/sbTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/sbSpeed"
+        android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/textSpeed"
+        android:layout_toEndOf="@+id/sbSpeed" />
+
+    <SeekBar
+        android:id="@+id/sbSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/textSpeed"
         android:layout_toStartOf="@+id/tvTurn" />
 
     <TextView
-        android:text="@string/Turn1"
+        android:id="@+id/tvTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTurn"
-        android:gravity="center"
         android:layout_above="@+id/textSpeed"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/tvSpeed" />
+        android:layout_toEndOf="@+id/tvSpeed"
+        android:gravity="center"
+        android:text="@string/Turn1" />
 
     <TextView
-        android:text="@string/Speed1"
+        android:id="@+id/tvSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvSpeed"
-        android:gravity="center"
         android:layout_alignBaseline="@+id/tvTurn"
         android:layout_alignBottom="@+id/tvTurn"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/btnLED2" />
+        android:layout_toStartOf="@+id/btnLED2"
+        android:gravity="center"
+        android:text="@string/Speed1" />
 
     <Button
-        android:text="@string/LCurveR"
+        android:id="@+id/btnLeftR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btnLeft"
+        android:layout_toStartOf="@+id/btnSpeedDown"
         android:width="120dp"
         android:height="100dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:onClick="leftRClick"
-        android:id="@+id/btnLeftR"
-        android:layout_below="@+id/btnLeft"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/btnSpeedDown" />
+        android:text="@string/LCurveR" />
 
     <Button
-        android:text="@string/Start1"
+        android:id="@+id/btnStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btnLeftR"
         android:width="75dp"
         android:height="100dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:onClick="startClick"
-        android:id="@+id/btnStart"
-        android:layout_below="@+id/btnLeftR"
-        android:layout_alignParentStart="true" />
+        android:text="@string/Start1" />
 
     <Button
-        android:text="@string/Max1"
-        android:height="80dp"
+        android:id="@+id/btnMax"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="maxClick"
-        android:id="@+id/btnMax"
-        android:width="20dp"
         android:layout_below="@+id/btnSpeedDown"
-        android:layout_toEndOf="@+id/btnStart" />
+        android:layout_toEndOf="@+id/btnStart"
+        android:width="20dp"
+        android:height="80dp"
+        android:onClick="maxClick"
+        android:text="@string/Max1" />
 
     <Button
         android:id="@+id/btnSpeedDown"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="backClick"
+        android:layout_above="@+id/btnPause"
+        android:layout_alignStart="@+id/btnSpeedUp"
+        android:layout_marginBottom="13dp"
         android:width="120dp"
         android:height="100dp"
+        android:onClick="backClick"
         android:text="@string/Down"
-        android:layout_marginBottom="13dp"
-        android:layout_above="@+id/btnPause"
-        android:layout_alignStart="@+id/btnSpeedUp" />
+        android:textSize="20sp" />
 
     <ProgressBar
+        android:id="@+id/progressBar3"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBar3"
-        android:layout_below="@+id/btnLED12"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/btnLED12" />
 
 </RelativeLayout>

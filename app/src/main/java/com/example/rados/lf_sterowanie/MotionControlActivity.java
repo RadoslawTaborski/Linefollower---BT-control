@@ -3,7 +3,6 @@ package com.example.rados.lf_sterowanie;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -22,7 +21,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
     private MyBluetooth bluetooth;
     private SensorManager SM;
     Sensor mySensor;
-   // private static final String TAG = "MyBluetooth";
     Button btnStart;
     Button btnConnect;
     ToggleButton btnR;
@@ -97,9 +95,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         tvSpeed.setX(x);
 
         bluetooth = new MyBluetooth(MotionControlActivity.this, "00:12:6F:6B:C0:A2");
-        bluetooth.updateUiAfterChangingBluetoothStatus();
-
-       // Log.i(TAG, "MotionControlActivityCreated");
     }
 
     public void connectClick(View v) {
@@ -217,16 +212,12 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         String result = "";
         if (bluetooth.isBtConnected()) {
             try {
-               // Log.i(TAG,"send przed wysłaniem");
                 bluetooth.sendData(msg);
                 result = msg;
-               // Log.i(TAG,"send wysłano");
             } catch (Exception ex) {
-               // Log.i(TAG,"send"+ex.getMessage());
                 ex.printStackTrace();
                 msg("Error");
             }
-           // Log.i(TAG,"send koniec");
         }
         return result;
     }
@@ -246,39 +237,24 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         final int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         final View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(uiOptions);
-       // Log.i(TAG,"onResume koniec");
-    }
-
-    private void ifConnected() {
-        if (bluetooth.isBtConnected()) {
-            send(ControlCommands.STOP);
-            try {
-                Thread.sleep(ControlCommands.sleepTime1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            send(ControlCommands.SPEED_ARRAY[sbSpeed.getProgress()]);
-            SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
-           // Log.i(TAG,"ifConnected koniec");
-        }
-    }
-
-    @Override
-    public void AfterConnecting() {
-       // Log.i(TAG, "StatusChanging CONNECTED");
         boolean flag = false;
         while (!flag) {
             if (bluetooth.isBtTurnedOn()) {
                 try {
-                    Thread.sleep(ControlCommands.sleepTime2);
-                    ifConnected();
+                    send(ControlCommands.STOP);
+                    Thread.sleep(ControlCommands.sleepTime1);
+                    send(ControlCommands.SPEED_ARRAY[sbSpeed.getProgress()]);
+                    SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
                     flag = true;
-                  //  Log.i(TAG,"StatusChanging koniec");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    @Override
+    public void AfterConnecting() {
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -298,7 +274,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
     @Override
     public void AfterDisconnecting() {
-       // Log.i(TAG, "StatusChanging DISCONNECTED");
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -317,12 +292,10 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
     @Override
     public void AfterTurningOnBluetooth() {
-        //Log.i(TAG, "StatusChanging BT_ON");
     }
 
     @Override
     public void AfterTurningOffBluetooth() {
-       // Log.i(TAG, "StatusChanging BT_OFF");
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -341,6 +314,5 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
     @Override
     public void AfterReceivingData(String data) {
-       // Log.i(TAG, "StatusChanging RECEIVED");
     }
 }

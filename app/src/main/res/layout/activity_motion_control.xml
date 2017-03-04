@@ -11,97 +11,97 @@
     tools:context="com.example.rados.lf_sterowanie.MotionControlActivity">
 
     <TextView
-        android:text="@string/Speed1"
+        android:id="@+id/tvSpeed3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvSpeed3"
-        android:gravity="center"
         android:layout_alignBaseline="@+id/tbtnR"
         android:layout_alignBottom="@+id/tbtnR"
-        android:layout_toEndOf="@+id/tbtnR" />
+        android:layout_toEndOf="@+id/tbtnR"
+        android:gravity="center"
+        android:text="@string/Speed1" />
 
     <SeekBar
+        android:id="@+id/sbSpeed3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:width="300dp"
-        android:id="@+id/sbSpeed3"
-        android:layout_alignTop="@+id/tvSpeed3"
         android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/tvSpeed3"
         android:layout_toEndOf="@+id/tvSpeed3"
+        android:width="300dp"
         android:progress="1" />
 
     <Button
-        android:text="@string/Start1"
-        android:height="150dp"
-        android:width="300dp"
-        android:textSize="20sp"
+        android:id="@+id/btnStart3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnStart3"
-        android:onClick="startClick"
-        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/tvValue"
-        android:layout_alignParentEnd="true" />
+        android:width="300dp"
+        android:height="150dp"
+        android:onClick="startClick"
+        android:text="@string/Start1"
+        android:textSize="20sp" />
 
     <ToggleButton
-        android:height="100dp"
-        android:width="100dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/tbtnR"
-        android:textOff="@string/ROn"
-        android:textOn="@string/ROff"
-        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnStart3"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/btnStart3" />
-
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvValue"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:width="100dp"
+        android:height="100dp"
+        android:textOff="@string/ROn"
+        android:textOn="@string/ROff" />
 
     <TextView
-        android:text=""
+        android:id="@+id/tvValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="" />
+
+    <TextView
         android:id="@+id/zText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/btnConnect3"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnConnect3" />
+        android:layout_toEndOf="@+id/btnConnect3"
+        android:text="" />
 
     <TextView
-        android:text=""
+        android:id="@+id/yText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/yText"
         android:layout_alignBaseline="@+id/btnConnect3"
         android:layout_alignBottom="@+id/btnConnect3"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnConnect3" />
+        android:layout_toEndOf="@+id/btnConnect3"
+        android:text="" />
 
     <TextView
-        android:text=""
+        android:id="@+id/xText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/xText"
         android:layout_above="@+id/yText"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnConnect3" />
+        android:layout_toEndOf="@+id/btnConnect3"
+        android:text="" />
 
     <Button
-        android:text="@string/Connect"
-        android:width="300dp"
+        android:id="@+id/btnConnect3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnConnect3"
-        android:height="30dp"
-        android:textSize="14sp"
-        android:onClick="connectClick"
         android:layout_below="@+id/btnStart3"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:width="300dp"
+        android:height="30dp"
+        android:onClick="connectClick"
+        android:text="@string/Connect"
+        android:textSize="14sp" />
 
 </RelativeLayout>

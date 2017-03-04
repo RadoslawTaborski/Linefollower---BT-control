@@ -25,5 +25,5 @@ public final class ControlCommands {
     static final String NOTHING = "z";
 
     static final int sleepTime1 = 100;
-    static final int sleepTime2 =100;
+    static final int sleepTime2 = 100;
 }

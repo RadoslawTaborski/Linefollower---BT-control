@@ -5,7 +5,6 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,7 +14,6 @@ import java.io.IOException;
 
 public class CompetitionActivity extends AppCompatActivity implements MyBluetooth.IMyBluetooth {
     public MyBluetooth bluetooth;
-    //private static final String TAG = "MyBluetooth";
     TextView tvSpeed;
     TextView tvKP;
     TextView tvKD;
@@ -54,7 +52,6 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
         tvSensorsData.setMovementMethod(new ScrollingMovementMethod());
 
         bluetooth = new MyBluetooth(CompetitionActivity.this, "00:12:6F:6B:C0:A2");
-        bluetooth.updateUiAfterChangingBluetoothStatus();
     }
 
     public void startClick(View v) {
@@ -191,7 +188,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     private void ifConnected() {
         if (bluetooth.isBtConnected()) {
             try {
-                final byte delimiter=13;
+                final byte delimiter = 13;
                 bluetooth.startReceiving(delimiter);
                 Thread.sleep(ControlCommands.sleepTime2);
                 bluetooth.sendData(ControlCommands.STOP);
@@ -223,7 +220,6 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
 
     @Override
     public void AfterConnecting() {
-      //  Log.i(TAG, "StatusChanging CONNECTED");
         boolean flag = false;
         while (!flag) {
             if (bluetooth.isBtTurnedOn()) {
@@ -257,7 +253,6 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
 
     @Override
     public void AfterDisconnecting() {
-      //  Log.i(TAG, "StatusChanging DISCONNECTED");
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -280,12 +275,10 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
 
     @Override
     public void AfterTurningOnBluetooth() {
-       // Log.i(TAG, "StatusChanging BT_ON");
     }
 
     @Override
     public void AfterTurningOffBluetooth() {
-       // Log.i(TAG, "StatusChanging BT_OFF");
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -307,14 +300,12 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
 
     @Override
     public void AfterReceivingData(final String data) {
-      //  Log.i(TAG, "StatusChanging RECEIVED");
         Thread uiThread = new Thread(new Runnable() {
             public void run() {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (data.length() == 15) {
-                           // Log.i(TAG, "odebrano " + data);
                             int tmp = Integer.parseInt(data.substring(0, 5));
                             tvKP.setText(String.valueOf(tmp));
                             tmp = Integer.parseInt(data.substring(5, 10));
@@ -322,7 +313,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                             tmp = Integer.parseInt(data.substring(10, 15));
                             tvSpeed.setText(String.valueOf(tmp));
                         } else {
-                            if(data.charAt(data.length()-1)=='\n')
+                            if (data.charAt(data.length() - 1) == '\n')
                                 tvSensorsData.setText(tvSensorsData.getText() + "\n" + data);
                         }
                     }

@@ -12,42 +12,42 @@
 
     <Button
         android:id="@+id/btnTest"
-        android:text="@string/Test"
-        android:textSize="15sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="testClick"
-        android:elevation="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:width="230dp"
         android:height="180dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:elevation="1dp"
+        android:onClick="testClick"
+        android:text="@string/Test"
+        android:textSize="15sp" />
 
     <Button
         android:id="@+id/btnCompetition"
-        android:text="@string/Competition"
-        android:textSize="15sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="competitionClick"
-        android:elevation="1dp"
+        android:layout_alignStart="@+id/btnTest"
+        android:layout_below="@+id/btnTest"
         android:width="230dp"
         android:height="180dp"
-        android:layout_below="@+id/btnTest"
-        android:layout_alignStart="@+id/btnTest" />
+        android:elevation="1dp"
+        android:onClick="competitionClick"
+        android:text="@string/Competition"
+        android:textSize="15sp" />
 
     <Button
-        android:text="@string/MotionControl"
+        android:id="@+id/btnMotionControl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnCompetition"
+        android:layout_alignEnd="@+id/btnCompetition"
         android:layout_alignStart="@+id/btnCompetition"
-        android:textSize="15sp"
-        android:elevation="1dp"
+        android:layout_below="@+id/btnCompetition"
         android:width="230dp"
         android:height="180dp"
-        android:id="@+id/btnMotionControl"
+        android:elevation="1dp"
         android:onClick="motionControlClick"
-        android:layout_alignEnd="@+id/btnCompetition" />
+        android:text="@string/MotionControl"
+        android:textSize="15sp" />
 
 </RelativeLayout>
