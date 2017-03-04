@@ -70,7 +70,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 tvSensorsData.setText("");
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -90,7 +90,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 btnConnect.setEnabled(true);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -107,7 +107,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 btnConnect.setEnabled(false);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -125,7 +125,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     readON = true;
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                    msg("Error");
+                    msg("IO Error");
                 }
             } else {
                 try {
@@ -138,7 +138,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     readON = false;
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                    msg("Error");
+                    msg("IO Error");
                 }
             }
         }
@@ -153,9 +153,9 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
             } catch (IOException ex) {
                 ex.printStackTrace();
                 msg("IO Error");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                msg("Interrupted Error");
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+                msg("Interrupt Error");
             }
         }
     }
@@ -167,6 +167,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     bluetooth.disconnect();
                 } catch (IOException ex) {
                     ex.printStackTrace();
+                    msg("IO Error");
                 }
             } else {
                 bluetooth.connect();
@@ -176,6 +177,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 bluetooth.turnOnBT();
             } catch (Exception ex) {
                 ex.printStackTrace();
+                msg(ex.getMessage());
             }
         }
     }
@@ -196,9 +198,10 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                msg("IO Error");
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+                msg("Interrupt Error");
             }
         }
     }
@@ -210,7 +213,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                 bluetooth.sendData(ControlCommands.STOP);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
         bluetooth.stoppedChangingStatus();
@@ -227,8 +230,9 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                     Thread.sleep(ControlCommands.sleepTime2);
                     ifConnected();
                     flag = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    msg("Interrupt Error");
                 }
             }
         }

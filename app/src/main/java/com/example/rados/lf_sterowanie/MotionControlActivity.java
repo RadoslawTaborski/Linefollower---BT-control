@@ -84,7 +84,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                         bluetooth.sendData(ControlCommands.SPEED_ARRAY[progress]);
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                        msg("Error");
+                        msg("IO Error");
                     }
                 }
             }
@@ -104,6 +104,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                     bluetooth.disconnect();
                 } catch (IOException ex) {
                     ex.printStackTrace();
+                    msg("IO Error");
                 }
             } else {
                 bluetooth.connect();
@@ -113,6 +114,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                 bluetooth.turnOnBT();
             } catch (Exception ex) {
                 ex.printStackTrace();
+                msg(ex.getMessage());
             }
         }
     }
@@ -148,8 +150,9 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                         last = send(ControlCommands.TURN_ARRAY[i]);
                         try {
                             Thread.sleep(ControlCommands.sleepTime1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                            msg("Interrupt Error");
                         }
                         lastDirection = send(ControlCommands.TURNING_RIGHT);
                         break;
@@ -160,8 +163,9 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                         last = send(ControlCommands.TURN_ARRAY[i]);
                         try {
                             Thread.sleep(ControlCommands.sleepTime1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                            msg("Interrupt Error");
                         }
                         lastDirection = send(ControlCommands.TURNING_LEFT);
                         break;
@@ -176,8 +180,9 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                         last = send(ControlCommands.TURN_ARRAY[i]);
                         try {
                             Thread.sleep(ControlCommands.sleepTime1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                            msg("Interrupt Error");
                         }
                         lastDirection = send(ControlCommands.TURNING_LEFT_R);
                         break;
@@ -188,8 +193,9 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                         last = send(ControlCommands.TURN_ARRAY[i]);
                         try {
                             Thread.sleep(ControlCommands.sleepTime1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                            msg("Interrupt Error");
                         }
                         lastDirection = send(ControlCommands.TURNING_RIGHT_R);
                         break;
@@ -214,9 +220,9 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
             try {
                 bluetooth.sendData(msg);
                 result = msg;
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
         return result;
@@ -246,8 +252,9 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                     send(ControlCommands.SPEED_ARRAY[sbSpeed.getProgress()]);
                     SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
                     flag = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    msg("Interrupt Error");
                 }
             }
         }

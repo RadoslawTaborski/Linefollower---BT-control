@@ -87,7 +87,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                         bluetooth.sendData(ControlCommands.SPEED_ARRAY[progress]);
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                        msg("Error");
+                        msg("IO Error");
                     }
                 }
             }
@@ -117,7 +117,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                         bluetooth.sendData(ControlCommands.TURN_ARRAY[progress]);
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                        msg("Error");
+                        msg("IO Error");
                     }
                 }
             }
@@ -176,7 +176,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                     bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                    msg("Error");
+                    msg("IO Error");
                 }
             }
             setOthers(true, false);
@@ -223,9 +223,10 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                msg("IO Error");
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+                msg("Interrupt Error");
             }
         }
     }
@@ -248,7 +249,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 msg("IO Error");
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                msg("Interrupted Error");
+                msg("Interrupt Error");
             }
         }
     }
@@ -268,9 +269,10 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                msg("IO Error");
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+                msg("Interrupt Error");
             }
         }
     }
@@ -290,9 +292,9 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                msg("IO Error");
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -307,7 +309,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -322,7 +324,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -344,7 +346,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -367,7 +369,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -386,6 +388,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             }
         } catch (IOException ex) {
             ex.printStackTrace();
+            msg("IO Error");
         }
     }
 
@@ -402,7 +405,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -414,6 +417,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                     bluetooth.disconnect();
                 } catch (IOException ex) {
                     ex.printStackTrace();
+                    msg("IO Error");
                 }
             } else {
                 bluetooth.connect();
@@ -423,6 +427,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 bluetooth.turnOnBT();
             } catch (Exception ex) {
                 ex.printStackTrace();
+                msg(ex.getMessage());
             }
         }
     }
@@ -433,7 +438,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 bluetooth.sendData(ControlCommands.LED1);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -444,7 +449,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 bluetooth.sendData(ControlCommands.LED2);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -455,7 +460,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 bluetooth.sendData(ControlCommands.LED12);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Error");
+                msg("IO Error");
             }
         }
     }
@@ -508,10 +513,10 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 bluetooth.sendData(ControlCommands.PARAMETERS_QUESTION);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                msg("Interrupted Error");
+                msg("Interrupt Error");
             } catch (IOException e) {
                 e.printStackTrace();
-                msg("Send Error");
+                msg("IO Error");
             }
         }
     }
@@ -523,7 +528,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                 bluetooth.sendData(ControlCommands.STOP);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                msg("Send Error");
+                msg("IO Error");
             }
         }
         bluetooth.stoppedChangingStatus();
@@ -541,8 +546,9 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
                     Thread.sleep(ControlCommands.sleepTime2);
                     ifConnected();
                     flag = true;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    msg("Interrupt Error");
                 }
             }
         }

@@ -1,21 +1,21 @@
 package com.example.rados.lf_sterowanie;
 
-        import android.app.Activity;
-        import android.app.ProgressDialog;
-        import android.bluetooth.BluetoothAdapter;
-        import android.bluetooth.BluetoothDevice;
-        import android.bluetooth.BluetoothSocket;
-        import android.content.BroadcastReceiver;
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.IntentFilter;
-        import android.os.AsyncTask;
-        import android.widget.Toast;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
-        import java.io.IOException;
-        import java.io.InputStream;
-        import java.io.OutputStream;
-        import java.util.UUID;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 
 class MyBluetooth {
     private static boolean btConnected = false;
@@ -109,24 +109,24 @@ class MyBluetooth {
                         int bytesAvailable = btInputStream.available();
                         if (bytesAvailable > 0) {
                             byte[] packetBytes = new byte[bytesAvailable];
-                            btInputStream.read(packetBytes);
-                            for (int i = 0; i < bytesAvailable; i++) {
-                                byte b = packetBytes[i];
-                                if (b == delimiter) {
-                                    byte[] encodedBytes = new byte[readBufferPosition];
-                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
-                                    final String data = new String(encodedBytes, "US-ASCII");
-                                    delegate.AfterReceivingData(data);
-                                    readBufferPosition = 0;
-                                    Thread.sleep(100);
-                                } else {
-                                    readBuffer[readBufferPosition++] = b;
+                            int read = btInputStream.read(packetBytes);
+                            if (read > 0) {
+                                for (int i = 0; i < bytesAvailable; i++) {
+                                    byte b = packetBytes[i];
+                                    if (b == delimiter) {
+                                        byte[] encodedBytes = new byte[readBufferPosition];
+                                        System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                        final String data = new String(encodedBytes, "US-ASCII");
+                                        delegate.AfterReceivingData(data);
+                                        readBufferPosition = 0;
+                                        Thread.sleep(100);
+                                    } else {
+                                        readBuffer[readBufferPosition++] = b;
+                                    }
                                 }
                             }
                         }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (Exception ex) {
+                    } catch (IOException | InterruptedException ex) {
                         ex.printStackTrace();
                     }
                 }
@@ -186,10 +186,10 @@ class MyBluetooth {
                     btOutputStream = btSocket.getOutputStream();
                     btInputStream = btSocket.getInputStream();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                toastMsg("Error");
+            } catch (IOException ex) {
+                ex.printStackTrace();
                 connectSuccess = false;
+                toastMsg("IO Error");
             }
             return null;
         }
@@ -221,7 +221,6 @@ class MyBluetooth {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) && !btConnected) {
                     toastMsg("Connected");
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action) && btConnected) {
@@ -229,7 +228,7 @@ class MyBluetooth {
                         toastMsg("Disconnected");
                         disconnect();
                     } catch (IOException ex) {
-                        toastMsg("Error IO");
+                        toastMsg("IO Error");
                         ex.printStackTrace();
                     } catch (Exception ex) {
                         toastMsg("Error");
@@ -249,9 +248,8 @@ class MyBluetooth {
 
         @Override
         public void run() {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
-                    // if (counter == max) {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
                     if (btAdapter != null) {
                         if (!btAdapter.isEnabled()) {
                             btTurnedOn = false;
@@ -287,9 +285,9 @@ class MyBluetooth {
                         lastState[1] = isBtConnected();
                         first = false;
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
