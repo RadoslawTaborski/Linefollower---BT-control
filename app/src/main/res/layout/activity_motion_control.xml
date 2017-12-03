@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_motion_control"
     android:layout_width="match_parent"
@@ -10,98 +11,166 @@
     android:paddingTop="10dp"
     tools:context="com.example.rados.lf_sterowanie.MotionControlActivity">
 
-    <TextView
-        android:id="@+id/tvSpeed3"
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tbtnR"
-        android:layout_alignBottom="@+id/tbtnR"
-        android:layout_toEndOf="@+id/tbtnR"
-        android:gravity="center"
-        android:text="@string/Speed1" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.20" />
 
-    <SeekBar
-        android:id="@+id/sbSpeed3"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/tvSpeed3"
-        android:layout_toEndOf="@+id/tvSpeed3"
-        android:width="300dp"
-        android:progress="1" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.10" />
 
-    <Button
-        android:id="@+id/btnStart3"
+    <android.support.constraint.Guideline
+    android:id="@+id/horizontalLine2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.30" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/tvValue"
-        android:width="300dp"
-        android:height="150dp"
-        android:onClick="startClick"
-        android:text="@string/Start1"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.80" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.60" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.10" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.90" />
 
     <ToggleButton
         android:id="@+id/tbtnR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnStart3"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:width="100dp"
-        android:height="100dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:textOff="@string/ROn"
-        android:textOn="@string/ROff" />
+        android:textOn="@string/ROff"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvSpeed3"
+        app:layout_constraintBottom_toTopOf="@+id/btnStart3"
+        app:layout_constraintVertical_weight="2"
+        app:layout_constraintHorizontal_weight="2"/>
+
+    <TextView
+        android:id="@+id/tvSpeed3"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/Speed1"
+        app:layout_constraintEnd_toStartOf="@+id/sbSpeed3"
+        app:layout_constraintBottom_toTopOf="@+id/btnStart3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tbtnR"
+        app:layout_constraintVertical_weight="2"
+        app:layout_constraintHorizontal_weight="1"/>
 
     <TextView
         android:id="@+id/tvValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/horizontalLine1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvSpeed3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="3"/>
 
-    <TextView
-        android:id="@+id/zText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btnConnect3"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnConnect3"
-        android:text="" />
+    <SeekBar
+        android:id="@+id/sbSpeed3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:progress="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnStart3"
+        app:layout_constraintTop_toTopOf="@id/horizontalLine1"
+        app:layout_constraintStart_toEndOf="@+id/tvSpeed3"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="3"/>
 
-    <TextView
-        android:id="@+id/yText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnConnect3"
-        android:layout_alignBottom="@+id/btnConnect3"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnConnect3"
-        android:text="" />
+    <Button
+        android:id="@+id/btnStart3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="startClick"
+        android:text="@string/Start1"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/tbtnR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/guideline3"
+        app:layout_constraintBottom_toTopOf="@+id/btnConnect3"
+        app:layout_constraintVertical_weight="4"/>
 
     <TextView
         android:id="@+id/xText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/yText"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnConnect3"
-        android:text="" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine2"
+        app:layout_constraintBottom_toTopOf="@+id/yText" />
+
+    <TextView
+        android:id="@+id/yText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/xText"
+        app:layout_constraintBottom_toTopOf="@+id/zText" />
+
+    <TextView
+        android:id="@+id/zText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/yText"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalLine3" />
 
     <Button
         android:id="@+id/btnConnect3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnStart3"
-        android:layout_centerHorizontal="true"
-        android:width="300dp"
-        android:height="30dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:onClick="connectClick"
         android:text="@string/Connect"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/btnStart3"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintEnd_toEndOf="@+id/guideline2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_weight="1"/>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

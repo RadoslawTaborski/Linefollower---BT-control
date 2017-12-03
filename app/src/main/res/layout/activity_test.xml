@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_test"
     android:layout_width="match_parent"
@@ -10,282 +11,380 @@
     android:paddingTop="5dp"
     tools:context="com.example.rados.lf_sterowanie.TestActivity">
 
-    <TextView
-        android:id="@+id/textRight"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnRight"
-        android:layout_alignEnd="@+id/btnRight"
-        android:layout_below="@+id/tvTurn"
-        android:layout_toEndOf="@+id/btnSpeedUp"
-        android:gravity="center"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
 
-    <TextView
-        android:id="@+id/textLeft"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnRight"
-        android:layout_alignStart="@+id/btnLeft"
-        android:layout_below="@+id/tvSpeed"
-        android:layout_toStartOf="@+id/btnSpeedUp"
-        android:gravity="center"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
 
-    <Button
-        android:id="@+id/btnRight"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnRightR"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnSpeedUp"
-        android:width="120dp"
-        android:height="100dp"
-        android:onClick="rightClick"
-        android:text="@string/RCurve"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
 
-    <Button
-        android:id="@+id/btnStop"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="37dp"
-        android:width="75dp"
-        android:height="100dp"
-        android:onClick="stopClick"
-        android:text="@string/Stop1" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.35" />
 
-    <Button
-        android:id="@+id/btnPause"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btnStop"
-        android:layout_toStartOf="@+id/btnStop"
-        android:width="20dp"
-        android:height="80dp"
-        android:onClick="pauseClick"
-        android:text="@string/Pauza1" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.30" />
 
-    <Button
-        android:id="@+id/btnConnect"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnStart"
-        android:layout_centerHorizontal="true"
-        android:width="300dp"
-        android:height="30dp"
-        android:onClick="connectClick"
-        android:text="@string/Connect" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25" />
 
-    <Button
-        android:id="@+id/btnSpeedUp"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnSpeedDown"
-        android:layout_centerHorizontal="true"
-        android:width="120dp"
-        android:height="100dp"
-        android:onClick="topClick"
-        android:text="@string/Up"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
 
-    <TextView
-        android:id="@+id/textSpeed"
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalLine6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnSpeedUp"
-        android:layout_toEndOf="@+id/textLeft"
-        android:width="120dp"
-        android:gravity="center"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70" />
 
-    <Button
-        android:id="@+id/btnLED12"
+    <android.support.constraint.Guideline
+        android:id="@+id/verticalLine1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnLED1"
-        android:layout_alignBottom="@+id/btnLED1"
-        android:layout_alignStart="@+id/btnMax"
-        android:onClick="led12Click"
-        android:text="@string/LED12" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
 
-    <Button
-        android:id="@+id/btnLED2"
+    <android.support.constraint.Guideline
+        android:id="@+id/verticalLine2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnLED12"
-        android:layout_alignBottom="@+id/btnLED12"
-        android:layout_toEndOf="@+id/btnLED12"
-        android:onClick="led2Click"
-        android:text="@string/LED2" />
-
-    <Button
-        android:id="@+id/btnLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/textLeft"
-        android:layout_toStartOf="@+id/btnSpeedUp"
-        android:width="120dp"
-        android:height="100dp"
-        android:onClick="leftClick"
-        android:text="@string/LCurve"
-        android:textSize="20sp" />
-
-    <Button
-        android:id="@+id/btnRightR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnStop"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/btnSpeedDown"
-        android:width="120dp"
-        android:height="100dp"
-        android:onClick="rightRClick"
-        android:text="@string/RCurveR" />
-
-    <Button
-        android:id="@+id/btnLED1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/chronometer"
-        android:layout_marginTop="10dp"
-        android:onClick="led1Click"
-        android:text="@string/LED1" />
-
-    <CheckBox
-        android:id="@+id/cbAuto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnLED2"
-        android:layout_alignBottom="@+id/btnLED2"
-        android:layout_alignParentEnd="true"
-        android:onClick="changedClick"
-        android:text="@string/Automatic1" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:gravity="center"
-        tools:text="Hello" />
+        tools:text="Hello"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/chronometer"
+        app:layout_constraintVertical_weight="1"/>
 
     <chronometer.Chronometer
         android:id="@+id/chronometer"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:gravity="center"
         android:text=""
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar2"
+        app:layout_constraintVertical_weight="1" />
 
     <ProgressBar
         android:id="@+id/progressBar2"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/chronometer" />
-
-    <SeekBar
-        android:id="@+id/sbTurn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/textSpeed"
-        android:layout_toEndOf="@+id/sbSpeed" />
-
-    <SeekBar
-        android:id="@+id/sbSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/textSpeed"
-        android:layout_toStartOf="@+id/tvTurn" />
-
-    <TextView
-        android:id="@+id/tvTurn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textSpeed"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/tvSpeed"
-        android:gravity="center"
-        android:text="@string/Turn1" />
-
-    <TextView
-        android:id="@+id/tvSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tvTurn"
-        android:layout_alignBottom="@+id/tvTurn"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/btnLED2"
-        android:gravity="center"
-        android:text="@string/Speed1" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/chronometer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnLED12"
+        app:layout_constraintVertical_weight="0.5" />
 
     <Button
-        android:id="@+id/btnLeftR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/btnLeft"
-        android:layout_toStartOf="@+id/btnSpeedDown"
-        android:width="120dp"
-        android:height="100dp"
-        android:onClick="leftRClick"
-        android:text="@string/LCurveR" />
+        android:id="@+id/btnLED1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="led1Click"
+        android:text="@string/LED1"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnLED12"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar3"
+        app:layout_constraintVertical_weight="2" />
 
     <Button
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/btnLeftR"
-        android:width="75dp"
-        android:height="100dp"
-        android:onClick="startClick"
-        android:text="@string/Start1" />
+        android:id="@+id/btnLED12"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="led12Click"
+        android:text="@string/LED12"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar2"
+        app:layout_constraintStart_toEndOf="@id/btnLED1"
+        app:layout_constraintEnd_toStartOf="@id/btnLED2"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar3"
+        app:layout_constraintVertical_weight="2" />
 
     <Button
-        android:id="@+id/btnMax"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnSpeedDown"
-        android:layout_toEndOf="@+id/btnStart"
-        android:width="20dp"
-        android:height="80dp"
-        android:onClick="maxClick"
-        android:text="@string/Max1" />
+        android:id="@+id/btnLED2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="led2Click"
+        android:text="@string/LED2"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar2"
+        app:layout_constraintStart_toEndOf="@id/btnLED12"
+        app:layout_constraintEnd_toStartOf="@id/cbAuto"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar3"
+        app:layout_constraintVertical_weight="2" />
 
-    <Button
-        android:id="@+id/btnSpeedDown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnPause"
-        android:layout_alignStart="@+id/btnSpeedUp"
-        android:layout_marginBottom="13dp"
-        android:width="120dp"
-        android:height="100dp"
-        android:onClick="backClick"
-        android:text="@string/Down"
-        android:textSize="20sp" />
+    <CheckBox
+        android:id="@+id/cbAuto"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="changedClick"
+        android:text="@string/Automatic1"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar2"
+        app:layout_constraintStart_toEndOf="@id/btnLED2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar3"
+        app:layout_constraintVertical_weight="2"  />
 
     <ProgressBar
         android:id="@+id/progressBar3"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/btnLED12" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLED12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalLine1"
+        app:layout_constraintVertical_weight="0.5"/>
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/textRight"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine7"
+        app:layout_constraintStart_toStartOf="@+id/btnRight"
+        app:layout_constraintEnd_toEndOf="@+id/btnRight"
+        app:layout_constraintBottom_toTopOf="@+id/btnRight" />
+
+    <TextView
+        android:id="@+id/textLeft"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine7"
+        app:layout_constraintStart_toStartOf="@+id/btnLeft"
+        app:layout_constraintEnd_toEndOf="@+id/btnLeft"
+        app:layout_constraintBottom_toTopOf="@+id/btnRight" />
+
+
+    <TextView
+        android:id="@+id/textSpeed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/btnSpeedUp"
+        app:layout_constraintEnd_toEndOf="@+id/btnSpeedUp"
+        app:layout_constraintBottom_toTopOf="@+id/btnSpeedUp"
+        app:layout_constraintTop_toBottomOf="@id/horizontalLine8"/>
+
+    <TextView
+        android:id="@+id/tvSpeed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/Speed1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine1"
+        app:layout_constraintEnd_toStartOf="@id/tvTurn"
+        app:layout_constraintBottom_toTopOf="@+id/sbSpeed" />
+
+    <TextView
+        android:id="@+id/tvTurn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/Turn1"
+        app:layout_constraintStart_toEndOf="@id/tvSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/sbTurn" />
+
+    <SeekBar
+        android:id="@+id/sbSpeed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSpeed"
+        app:layout_constraintEnd_toStartOf="@id/sbTurn"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalLine5" />
+
+    <SeekBar
+        android:id="@+id/sbTurn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/sbSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/tvTurn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/horizontalLine5" />
+
+
+
+    <Button
+        android:id="@+id/btnRight"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="rightClick"
+        android:text="@string/RCurve"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/btnSpeedUp"
+        app:layout_constraintTop_toBottomOf="@id/horizontalLine4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnRightR"
+        app:layout_constraintVertical_weight="3" />
+
+    <Button
+        android:id="@+id/btnRightR"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="rightRClick"
+        android:text="@string/RCurveR"
+        app:layout_constraintStart_toEndOf="@id/btnSpeedDown"
+        app:layout_constraintTop_toBottomOf="@id/btnRight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/horizontalLine3"
+        app:layout_constraintVertical_weight="3" />
+
+    <Button
+        android:id="@+id/btnSpeedUp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="topClick"
+        android:text="@string/Up"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/btnLeftR"
+        app:layout_constraintTop_toBottomOf="@id/horizontalLine5"
+        app:layout_constraintEnd_toStartOf="@id/btnRightR"
+        app:layout_constraintBottom_toTopOf="@id/btnSpeedDown"
+        app:layout_constraintVertical_weight="3" />
+
+    <Button
+        android:id="@+id/btnSpeedDown"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="backClick"
+        android:text="@string/Down"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/btnLeftR"
+        app:layout_constraintTop_toBottomOf="@id/btnSpeedUp"
+        app:layout_constraintEnd_toStartOf="@id/btnRightR"
+        app:layout_constraintBottom_toTopOf="@id/horizontalLine6"
+        app:layout_constraintVertical_weight="3" />
+
+    <Button
+        android:id="@+id/btnLeft"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="leftClick"
+        android:text="@string/LCurve"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontalLine4"
+        app:layout_constraintEnd_toStartOf="@id/btnSpeedDown"
+        app:layout_constraintBottom_toTopOf="@id/btnLeftR"
+        app:layout_constraintVertical_weight="3" />
+
+    <Button
+        android:id="@+id/btnLeftR"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="leftRClick"
+        android:text="@string/LCurveR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLeft"
+        app:layout_constraintEnd_toStartOf="@id/btnSpeedDown"
+        app:layout_constraintBottom_toTopOf="@id/horizontalLine3"
+        app:layout_constraintVertical_weight="3" />
+
+
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="startClick"
+        android:text="@string/Start1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine3"
+        app:layout_constraintEnd_toStartOf="@id/btnMax"
+        app:layout_constraintBottom_toTopOf="@id/btnConnect"
+        app:layout_constraintVertical_weight="2" />
+
+    <Button
+        android:id="@+id/btnMax"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="maxClick"
+        android:text="@string/Max1"
+        app:layout_constraintStart_toEndOf="@id/btnStart"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine3"
+        app:layout_constraintEnd_toStartOf="@id/btnPause"
+        app:layout_constraintBottom_toBottomOf="@id/horizontalLine2" />
+
+    <Button
+        android:id="@+id/btnPause"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="pauseClick"
+        android:text="@string/Pauza1"
+        app:layout_constraintStart_toEndOf="@id/btnMax"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine3"
+        app:layout_constraintEnd_toStartOf="@id/btnStop"
+        app:layout_constraintBottom_toBottomOf="@id/horizontalLine2" />
+
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="stopClick"
+        android:text="@string/Stop1"
+        app:layout_constraintStart_toEndOf="@+id/btnPause"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnConnect" />
+
+    <Button
+        android:id="@+id/btnConnect"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="connectClick"
+        android:text="@string/Connect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/verticalLine2"
+        app:layout_constraintStart_toStartOf="@+id/verticalLine1"
+        app:layout_constraintTop_toBottomOf="@+id/btnStart"
+        app:layout_constraintVertical_weight="0.7" />
+
+</android.support.constraint.ConstraintLayout>
