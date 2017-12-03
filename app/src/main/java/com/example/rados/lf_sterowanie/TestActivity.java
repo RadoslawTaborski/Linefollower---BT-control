@@ -199,7 +199,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
             btnSpeedUp.setText(R.string.Up);
             btnSpeedDown.setText(R.string.Down);
             btnMax.setText(R.string.Max1);
-            btnPause.setText(R.string.Pauza1);
+            btnPause.setText(R.string.Pause1);
             btnLeftR.setVisibility(View.VISIBLE);
             btnRightR.setVisibility(View.VISIBLE);
             setOthers(true, true);

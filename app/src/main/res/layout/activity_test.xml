@@ -358,7 +358,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:onClick="pauseClick"
-        android:text="@string/Pauza1"
+        android:text="@string/Pause1"
         app:layout_constraintStart_toEndOf="@id/btnMax"
         app:layout_constraintTop_toBottomOf="@+id/horizontalLine3"
         app:layout_constraintEnd_toStartOf="@id/btnStop"

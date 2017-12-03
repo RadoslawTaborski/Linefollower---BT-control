@@ -317,8 +317,12 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
                             tmp = Integer.parseInt(data.substring(10, 15));
                             tvSpeed.setText(String.valueOf(tmp));
                         } else {
-                            if (data.charAt(data.length() - 1) == '\n')
-                                tvSensorsData.setText(tvSensorsData.getText() + "\n" + data);
+                            if (data.charAt(data.length() - 1) == '\n') {
+                                tvSensorsData.append("\n" + data);
+                                while (tvSensorsData.canScrollVertically(1)) {
+                                    tvSensorsData.scrollBy(0, 10);
+                                }
+                            }
                         }
                     }
                 });
