@@ -9,7 +9,7 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="android:colorBackgroundCacheHint">@color/colorPrimaryDark</item>
         <item name="android:buttonStyle">@style/MyCustomButton</item>
-        <item name="android:buttonStyleToggle">@style/MyCustomButton</item>
+        <item name="android:buttonStyleToggle">@style/MyCustomToggleButton</item>
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">
@@ -25,14 +25,14 @@
     </style>
 
     <style name="MyCustomButton" parent="android:Widget.Button">
-        <item name="android:background">@drawable/selector</item>
+        <item name="android:background">@drawable/button_selector</item>
         <item name="android:textColor">@color/colorText</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">italic|bold</item>
     </style>
 
-    <style name="MyCustomToggleButton" parent="android:Widget.Button.Toggle">
-        <item name="android:background">@drawable/selector</item>
+    <style name="MyCustomToggleButton" parent="@android:style/Widget.Material.Light.Button.Toggle">
+        <item name="android:background">@drawable/toggle_button_selector</item>
         <item name="android:textColor">@color/colorText</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">italic|bold</item>

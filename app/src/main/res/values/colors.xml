@@ -4,7 +4,12 @@
     <color name="colorPrimaryDark">#f29933</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorButton">#c99930</color>
+    <color name="colorToggleTrue">#FF4081</color>
+    <color name="colorToggleFalse">#888888</color>
+    <color name="colorButtonDisabled">#c99930</color>
+    <color name="colorButton">#f29933</color>
+    <color name="colorButtonHover">#f2ca69</color>
+
     <color name="colorText">#ffffff</color>
     <color name="transparent">#00000000 </color>
     <color name="black_overlay">#66000000</color>
