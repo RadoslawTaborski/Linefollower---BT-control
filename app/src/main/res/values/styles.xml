@@ -10,6 +10,7 @@
         <item name="android:colorBackgroundCacheHint">@color/colorPrimaryDark</item>
         <item name="android:buttonStyle">@style/MyCustomButton</item>
         <item name="android:buttonStyleToggle">@style/MyCustomToggleButton</item>
+        <item name="android:alertDialogStyle">@style/MyProgressDialog</item>
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">
@@ -36,6 +37,24 @@
         <item name="android:textColor">@color/colorText</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">italic|bold</item>
+    </style>
+
+    <style name="MyProgressDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:bottomBright">@color/colorPrimaryDark</item>
+        <item name="android:bottomDark">@color/colorPrimaryDark</item>
+        <item name="android:bottomMedium">@color/colorPrimaryDark</item>
+        <item name="android:centerBright">@color/colorPrimaryDark</item>
+        <item name="android:centerDark">@color/colorPrimaryDark</item>
+        <item name="android:centerMedium">@color/colorPrimaryDark</item>
+        <item name="android:fullBright">@color/colorPrimaryDark</item>
+        <item name="android:fullDark">@color/colorPrimaryDark</item>
+        <item name="android:topBright">@color/colorPrimaryDark</item>
+        <item name="android:topDark">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="MyTheme" parent="@android:style/Theme.Dialog">
+        <item name="android:alertDialogStyle">@style/MyProgressDialog</item>
+        <item name="android:textColorPrimary">#ffffff</item>
     </style>
 
     <style name="MyCustomTheme">

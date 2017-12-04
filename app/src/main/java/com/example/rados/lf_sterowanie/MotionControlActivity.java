@@ -43,6 +43,8 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
 
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        bluetooth = new MyBluetooth(MotionControlActivity.this, "00:12:6F:6B:C0:A2");
+
         btnStart = (Button) findViewById(R.id.btnStart3);
         btnR = (ToggleButton) findViewById(R.id.tbtnR);
         btnR.setChecked(false);
@@ -91,8 +93,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
             }
         });
         sbSpeed.setProgress(3);
-
-        bluetooth = new MyBluetooth(MotionControlActivity.this, "00:12:6F:6B:C0:A2");
     }
 
     public void connectClick(View v) {
@@ -242,8 +242,8 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         final View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(uiOptions);
         boolean flag = false;
-        while (!flag) {
-            if (bluetooth.isBtTurnedOn()) {
+        if (bluetooth.isBtTurnedOn()) {
+            while (!flag) {
                 try {
                     send(ControlCommands.STOP);
                     Thread.sleep(ControlCommands.sleepTime1);

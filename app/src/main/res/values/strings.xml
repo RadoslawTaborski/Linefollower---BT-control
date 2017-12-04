@@ -12,8 +12,8 @@
     <string name="RCurve">RIGHT</string>
     <string name="LCurveR">LEFT R</string>
     <string name="RCurveR">RIGHT R</string>
-    <string name="Up">UP</string>
-    <string name="Down">DOWN</string>
+    <string name="Up">FRONT</string>
+    <string name="Down">BACK</string>
     <string name="Start1">START</string>
     <string name="Stop1">STOP</string>
     <string name="Max1">MAX</string>

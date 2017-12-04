@@ -27,11 +27,12 @@
         </shape>
     </item>
     <item
-        android:left="40dip"
-        android:right="40dip"
-        android:top="40dip">
+        android:left="30dip"
+        android:right="30dip"
+        android:top="20dip"
+        android:bottom="20dip">
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
-            android:shape="line">
+            android:shape="rectangle">
             <stroke
                 android:width="5dip"
                 android:color="@color/colorToggleFalse" />

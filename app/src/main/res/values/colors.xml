@@ -5,7 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorToggleTrue">#FF4081</color>
-    <color name="colorToggleFalse">#888888</color>
+    <color name="colorToggleFalse">#dddddd</color>
     <color name="colorButtonDisabled">#c99930</color>
     <color name="colorButton">#f29933</color>
     <color name="colorButtonHover">#f2ca69</color>

@@ -22,7 +22,7 @@
         </activity>
         <activity android:name=".TestActivity" />
         <activity android:name=".CompetitionActivity" />
-        <activity android:name=".MotionControlActivity"></activity>
+        <activity android:name=".MotionControlActivity"/>
     </application>
 
 </manifest>
