@@ -54,6 +54,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
         btnConnect = (Button) findViewById(R.id.btnConnect3);
         sbSpeed = (SeekBar) findViewById(R.id.sbSpeed3);
         tvSpeed = (TextView) findViewById(R.id.tvValue);
+        tvSpeed.setVisibility(View.INVISIBLE);
 
         SM = (SensorManager) getSystemService(SENSOR_SERVICE);       // Accelerometer Sensor
         mySensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);        // Register sensor Listener
@@ -90,9 +91,6 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
             }
         });
         sbSpeed.setProgress(3);
-        tvSpeed.setText(String.valueOf(sbSpeed.getProgress()));
-        float x = (sbSpeed.getThumb().getBounds().centerX() + sbSpeed.getX());
-        tvSpeed.setX(x);
 
         bluetooth = new MyBluetooth(MotionControlActivity.this, "00:12:6F:6B:C0:A2");
     }
@@ -272,6 +270,10 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                         btnStart.setEnabled(true);
                         btnR.setEnabled(true);
                         sbSpeed.setEnabled(true);
+                        tvSpeed.setVisibility(View.VISIBLE);
+                        tvSpeed.setText(String.valueOf(sbSpeed.getProgress()));
+                        float x = (sbSpeed.getThumb().getBounds().centerX() + sbSpeed.getX());
+                        tvSpeed.setX(x);
                     }
                 });
             }
@@ -290,6 +292,7 @@ public class MotionControlActivity extends AppCompatActivity implements MyBlueto
                         btnStart.setEnabled(false);
                         btnR.setEnabled(false);
                         sbSpeed.setEnabled(false);
+                        tvSpeed.setVisibility(View.INVISIBLE);
                     }
                 });
             }

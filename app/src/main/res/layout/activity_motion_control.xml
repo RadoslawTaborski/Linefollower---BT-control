@@ -98,6 +98,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:text=""
+        android:gravity="bottom"
         app:layout_constraintBottom_toTopOf="@+id/horizontalLine1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvSpeed3"
