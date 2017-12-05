@@ -47,7 +47,7 @@ public class TestActivity extends AppCompatActivity implements MyBluetooth.IMyBl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         final String zero = "0";
         textRight = (TextView) findViewById(R.id.textRight);

@@ -45,7 +45,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text=""
-        android:textSize="20sp"
+        android:textSize="12sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +58,7 @@
         android:layout_height="0dp"
         android:onClick="startClick"
         android:text="@string/Start1"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/chronometer2"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline1"
@@ -70,6 +71,7 @@
         android:layout_height="0dp"
         android:onClick="stopClick"
         android:text="@string/Stop1"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/btnStart2"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline1"
@@ -82,6 +84,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/Kp2"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/btnStop2"
         app:layout_constraintEnd_toStartOf="@+id/textView3"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,6 +97,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/Speed2"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/btnStop2"
         app:layout_constraintEnd_toStartOf="@+id/textView4"
         app:layout_constraintStart_toEndOf="@+id/textView2"
@@ -106,6 +110,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/Kd2"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/btnStop2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView3"
@@ -117,7 +122,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:textSize="18sp"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toStartOf="@+id/tvKD2"
         app:layout_constraintStart_toEndOf="@+id/tvKP2"
@@ -129,7 +134,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:textSize="18sp"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvSpeed2"
@@ -141,7 +146,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:textSize="18sp"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toStartOf="@+id/tvSpeed2"
         app:layout_constraintStart_toStartOf="parent"
@@ -154,10 +159,11 @@
         android:layout_height="0dp"
         android:onClick="eepromClick"
         android:text="@string/Eeprom2"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/tvKD2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnClear2"
-        app:layout_constraintBottom_toTopOf="@+id/tvData"
+        app:layout_constraintBottom_toTopOf="@+id/space"
         app:layout_constraintVertical_weight="1"/>
 
     <Button
@@ -166,10 +172,12 @@
         android:layout_height="0dp"
         android:onClick="readClick"
         android:text="@string/Read2"
+        android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/tvKP2"
         app:layout_constraintEnd_toStartOf="@+id/btnClear2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tvData"
+        app:layout_constraintBottom_toTopOf="@+id/space"
         app:layout_constraintVertical_weight="1"/>
 
     <Button
@@ -178,10 +186,34 @@
         android:layout_height="0dp"
         android:onClick="clearClick"
         android:text="@string/Clear1"
+        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/tvSpeed2"
         app:layout_constraintEnd_toStartOf="@+id/btnRead2"
         app:layout_constraintStart_toEndOf="@+id/btnRead"
-        app:layout_constraintBottom_toTopOf="@+id/tvData"
+        app:layout_constraintBottom_toTopOf="@+id/space"
+        app:layout_constraintVertical_weight="1"/>
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/btnClear2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnConnect2"
+        app:layout_constraintVertical_weight="1"/>
+
+    <Button
+        android:id="@+id/btnConnect2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="connectClick"
+        android:text="@string/Connect"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/space"
+        app:layout_constraintEnd_toEndOf="@id/guideline2a"
+        app:layout_constraintStart_toStartOf="@id/guideline1a"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_weight="1"/>
 
     <TextView
@@ -193,23 +225,11 @@
         android:scrollbars="vertical"
         android:text=""
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/btnClear2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btnConnect2"
         app:layout_constraintVertical_weight="4"/>
-
-    <Button
-        android:id="@+id/btnConnect2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:onClick="connectClick"
-        android:text="@string/Connect"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/tvData"
-        app:layout_constraintEnd_toEndOf="@id/guideline2a"
-        app:layout_constraintStart_toStartOf="@id/guideline1a"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_weight="1"/>
 
 </android.support.constraint.ConstraintLayout>

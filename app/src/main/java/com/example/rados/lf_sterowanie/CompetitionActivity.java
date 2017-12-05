@@ -32,7 +32,7 @@ public class CompetitionActivity extends AppCompatActivity implements MyBluetoot
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_competition);
-        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         final String zero = "0";
 
         tvSpeed = (TextView) findViewById(R.id.tvSpeed2);
