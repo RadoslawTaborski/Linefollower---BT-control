@@ -28,14 +28,14 @@
     <string name="Speed1">SPEED=</string>
     <string name="Turn1">TURN=</string>
     <string name="Save1">SAVE</string>
-    <string name="Clear1">CLEAR</string>
+    <string name="Clear1">CLEAN</string>
     <string name="Eeprom1">EEPROM</string>
 
     <string name="Competition">COMPETITION</string>
     <string name="Kp2">KP</string>
     <string name="Kd2">KD</string>
     <string name="Speed2">SPEED</string>
-    <string name="Clear2">CLEAR</string>
+    <string name="Clear2">CLEAN</string>
     <string name="Read2">READ</string>
     <string name="ReadStop2">READ STOP</string>
     <string name="Eeprom2">EEPROM</string>
